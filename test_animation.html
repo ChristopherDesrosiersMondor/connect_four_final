@@ -67,17 +67,18 @@
     var circle2 = document.querySelector('#circle2')
  
 var xPos = 0;
-var xPos2 = -100;
-var yPos2 = 100;
+var yPos = 0;
+var xPos2 = 100;
+var yPos2 = -100;
  
 function animate() {
   xPos += 10;
-  xPos2 += 15;
+  xPos2 += 10;
  
-  circle.style.transform = `translate3d(${xPos}px, 0, 0)`;
-  circle2.style.transform = `translate3d(${xPos2}px, 0, 0)`;
+  circle.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+  circle2.style.transform = `translate3d(${xPos2}px, ${yPos2}px, 0)`;
  
-  if (xPos <= 900) {
+  if (xPos <= 900 || xPos2 <= 900) {
     requestAnimationFrame(animate);
   }
 }
