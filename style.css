@@ -1,0 +1,49 @@
+body {
+    background-color: #D3D3D3;
+}
+
+#board {
+    background-color: blue;
+    width: 700px;
+    height: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 80px;
+    border: 2px solid black;
+}
+
+td, tr {
+    border: 2px solid black;
+}
+
+.rangeBoard {
+    width: 100%;
+    height: 100px;
+}
+
+.cercle {
+    width: 90px;
+    height: 90px;
+    background-color: white;
+    border-radius: 50%;
+    margin: 10px;
+}
+
+.red {
+    width: 100px;
+    height: 100%;
+    background-color: red;
+    border-radius: 50%;
+}
+
+.blue {
+    width: 100px;
+    height: 100%;
+    background-color: blue;
+    border-radius: 50%;
+}
+
+#boutonDiv {
+    text-align: center;
+    margin-top: 30px
+}
