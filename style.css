@@ -8,12 +8,16 @@ body {
     height: 600px;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 80px;
-    border: 2px solid black;
+    border: 4px solid black;
 }
 
-td, tr {
-    border: 2px solid black;
+#topBoard {
+    width: 700px;
+    height: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 80px;
+    margin-bottom: 0px;
 }
 
 .rangeBoard {
@@ -27,20 +31,25 @@ td, tr {
     background-color: white;
     border-radius: 50%;
     margin: 10px;
+    border: 2px solid black;
 }
 
 .red {
-    width: 100px;
-    height: 100%;
+    width: 90px;
+    height: 90px;
     background-color: red;
     border-radius: 50%;
+    margin: 10px; 
+    border: 2px solid black;                                           
 }
 
-.blue {
-    width: 100px;
-    height: 100%;
-    background-color: blue;
+.yellow {
+    width: 90px;
+    height: 90px;
+    background-color: yellow;
     border-radius: 50%;
+    margin: 10px;
+    border: 2px solid black;
 }
 
 #boutonDiv {
