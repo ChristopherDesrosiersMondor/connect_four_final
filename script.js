@@ -2,7 +2,7 @@ const colonne = 7;
 const rangee = 6;
 const couleur1 = 'red';
 const couleur2 = 'yellow';
-var nbTours = 0;
+var nbTours = NaN;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function initialiser_board() {
@@ -23,7 +23,8 @@ function initialiser_board() {
             tr.append(td);
         }
     }
-    game();
+    // game();
+    tour();
 }
 
 function topJetons(couleur) {
@@ -47,7 +48,7 @@ function topJetons(couleur) {
 
 function tour() {
     nbTours += 1;
-    if (nbTours % 2 === 0) {
+    if (nbTours % 2 === 1) {
         var couleur = couleur1;
     }
     else {
@@ -83,6 +84,7 @@ async function jouer(colonne, couleur) {
             }
         }
     }
+    tour();
 }
 
 function game() {
