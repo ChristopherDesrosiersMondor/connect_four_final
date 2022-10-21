@@ -2,7 +2,7 @@ import json
 from django.shortcuts import render
 from django.http import HttpResponse
 # Create your views here.
-
+# https://www.javatpoint.com/django-session
 
 def home(request):
     return render(
@@ -11,7 +11,16 @@ def home(request):
     )
 
 def request_access(request):
-    print("DJANGO VIEW")
     a = request.POST.get('request_data')
-    print(a)
-    return HttpResponse(json.dumps(a),content_type="application/json")
+    request.session['id'] = a.toString()
+    return HttpResponse("session is set")
+
+def print_id(request):
+    id = request.session['id']
+    return render(
+    request,
+    'connect_four/base.html',
+    {
+        'id': id
+    }
+    )

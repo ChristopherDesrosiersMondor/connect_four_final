@@ -4,4 +4,5 @@ from connect_four import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('test/', views.request_access , name='request_access'),
+    path('id/', views.print_id, name = 'print_id')
 ]
