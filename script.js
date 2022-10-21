@@ -2,7 +2,7 @@ const colonne = 7;
 const rangee = 6;
 const couleur1 = 'red';
 const couleur2 = 'yellow';
-var nbTours = NaN;
+var nbTours = 0;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function initialiser_board() {
@@ -48,11 +48,12 @@ function topJetons(couleur) {
 
 function tour() {
     nbTours += 1;
+    var couleur = null
     if (nbTours % 2 === 1) {
-        var couleur = couleur1;
+        couleur = couleur1;
     }
     else {
-        var couleur = couleur2;
+        couleur = couleur2;
     }
     topJetons(couleur)
     let btn0 = document.querySelector('#btn0');
