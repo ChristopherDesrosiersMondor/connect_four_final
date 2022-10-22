@@ -11,8 +11,9 @@ def home(request):
     )
 
 def request_access(request):
-    a = request.POST.get('request_data')
-    request.session['id'] = a.toString()
+    colonne = request.POST.get('request_data')
+
+    request.session['id'] = colonne.toString()
     return HttpResponse("session is set")
 
 def print_id(request):
