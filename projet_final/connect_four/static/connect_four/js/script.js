@@ -85,10 +85,9 @@ async function jouer(colonne, couleur) {
         url: "test/",
         data : {
             request_data: request_data,
-            player : player
+            player: player,
         },
         success : function(json) {
-            $("#request-access").hide();
             console.log("requested access complete");
         }
     })
