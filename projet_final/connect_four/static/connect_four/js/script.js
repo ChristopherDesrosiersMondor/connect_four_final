@@ -112,6 +112,27 @@ async function jouer(colonne, couleur) {
     edit_matrice()
 }
 
+function edit_matrice() {
+    let board = document.querySelector("#board");
+    let rangees = board.querySelectorAll("tr");
+    for (let i = 0; i < rangees.length(); i++) {
+        let colonnes = rangee.querySelectorAll('td')
+        for (let j = 0; j < colonnes.length(); j++) {
+            classe = colonne.getAttribute('class')
+            if (classe === 'yellow') {
+                matrice_jeu[i][j] = 'Y'
+            }
+            else if (classe === 'red') {
+                matrice_jeu[i][j] = 'R'
+            }
+            else {
+                matrice_jeu[i][j] = ' '
+            }
+        }
+    }
+
+}
+
 function game() {
     for (i = 0; i < 10; i++) {
         tour()
