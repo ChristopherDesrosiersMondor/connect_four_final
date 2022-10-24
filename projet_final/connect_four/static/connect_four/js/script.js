@@ -4,6 +4,10 @@ const couleur1 = 'red';
 const couleur2 = 'yellow';
 var nbTours = 0;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+var matrice_jeu = []
+
+// Source: pluralsight.com/guides/work-with-ajax-django
+// Utilisation: envoyer des requetes a d'autres views a partir de js avec jquery et ajax
 
 function initialiser_board() {
     $.ajax({
@@ -17,6 +21,7 @@ function initialiser_board() {
         const tr = document.createElement("tr");
         tr.setAttribute('class', 'rangeBoard');
         board.append(tr);
+        matrice_jeu[i] = []
         for (let j = 0; j < colonne; j++) {
             const td = document.createElement("td");
             const divTd = document.createElement("div");
@@ -24,6 +29,7 @@ function initialiser_board() {
             divTd.setAttribute('name', `${i}${j}`);
             td.append(divTd);
             tr.append(td);
+            matrice_jeu[i][j] = ''
         }
     }
     // game();
@@ -82,7 +88,7 @@ async function jouer(colonne, couleur) {
     var player = "joeureuse1"
     console.log("data: " + request_data);
     $.ajax({
-        url: "test/",
+        url: "jouer/",
         data : {
             request_data: request_data,
             player: player,
@@ -91,6 +97,7 @@ async function jouer(colonne, couleur) {
             console.log("requested access complete");
         }
     })
+    tour();
     for (let i = 0; i < rangee; i++) {
         let first = document.querySelector(`[name="${i}${colonne}"]`)
         if (first.getAttribute('class') === 'cercle') {
@@ -102,7 +109,7 @@ async function jouer(colonne, couleur) {
             }
         }
     }
-    tour();
+    edit_matrice()
 }
 
 function game() {

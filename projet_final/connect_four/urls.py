@@ -3,7 +3,6 @@ from connect_four import views
 
 urlpatterns = [
     path('', views.home_try, name='home'),
-    path('test/', views.request_access , name='request_access'),
-    path('id/', views.print_id, name = 'print_id'),
-    path('init/', views.init_game, name='init')
+    path('jouer/', views.jouer , name='request_access'),
+    path('board_state/', views.print_state, name = 'print_state'),
 ]
