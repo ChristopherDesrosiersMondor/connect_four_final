@@ -339,7 +339,7 @@ class Ai_C4(Joueureuse):
         self.tree = {}
         self.next_moves = []
     
-    def jouer(self, board: Board) -> None:
+    def jouer(self, board: Board) -> int:
         colonne = self.next_move(board)
         # TNode.print_pretty(self.root)
         # with open('test.txt', 'w', encoding='utf-8') as file:
@@ -347,6 +347,7 @@ class Ai_C4(Joueureuse):
         # TNode.tree_rep = ""
         node_to_modify = board.first_empty_node(colonne)
         board.updater_board(self.jeton, node_to_modify)
+        return colonne
 
     def draw_solution(self):
         self.draw_tree(self.root, 0)

@@ -10,9 +10,6 @@ var matrice_jeu = []
 // Utilisation: envoyer des requetes a d'autres views a partir de js avec jquery et ajax
 
 function initialiser_board() {
-    $.ajax({
-        url: "init/"
-    })
     var nbTours = 0;
     let board = document.querySelector("#board")
     board.innerHTML = ""
@@ -55,49 +52,51 @@ function topJetons(couleur) {
     }
 }
 
-function tour() {
+async function tour() {
     nbTours += 1;
     var couleur = null
-    if (nbTours % 2 === 1) {
+    if (nbTours % 2 === 0) {
         couleur = couleur1;
+        topJetons(couleur)
+        var isAI = false
+        if (couleur === 'red') {
+            isAI = true
+        }
+        console.log("data: " + JSON.stringify(matrice_jeu));
+        $.ajax({
+            url: "jouer/",
+            data : {
+                matrice: JSON.stringify(matrice_jeu)
+            },
+            success : function(response) {
+                console.log(response)
+                jouer(response - 1, couleur)
+            }
+        })
     }
     else {
         couleur = couleur2;
+        topJetons(couleur)
+        let btn0 = document.querySelector('#btn0');
+        let btn1 = document.querySelector('#btn1');
+        let btn2 = document.querySelector('#btn2');
+        let btn3 = document.querySelector('#btn3');
+        let btn4 = document.querySelector('#btn4');
+        let btn5 = document.querySelector('#btn5');
+        let btn6 = document.querySelector('#btn6');
+        
+        btn0.addEventListener("click", function(){jouer(0, couleur)}, false);
+        btn1.addEventListener("click", function(){jouer(1, couleur)}, false);
+        btn2.addEventListener("click", function(){jouer(2, couleur)}, false);
+        btn3.addEventListener("click", function(){jouer(3, couleur)}, false);
+        btn4.addEventListener("click", function(){jouer(4, couleur)}, false);
+        btn5.addEventListener("click", function(){jouer(5, couleur)}, false);
+        btn6.addEventListener("click", function(){jouer(6, couleur)}, false);
     }
-    topJetons(couleur)
-    let btn0 = document.querySelector('#btn0');
-    let btn1 = document.querySelector('#btn1');
-    let btn2 = document.querySelector('#btn2');
-    let btn3 = document.querySelector('#btn3');
-    let btn4 = document.querySelector('#btn4');
-    let btn5 = document.querySelector('#btn5');
-    let btn6 = document.querySelector('#btn6');
-    
-    btn0.addEventListener("click", function(){jouer(0, couleur)}, false);
-    btn1.addEventListener("click", function(){jouer(1, couleur)}, false);
-    btn2.addEventListener("click", function(){jouer(2, couleur)}, false);
-    btn3.addEventListener("click", function(){jouer(3, couleur)}, false);
-    btn4.addEventListener("click", function(){jouer(4, couleur)}, false);
-    btn5.addEventListener("click", function(){jouer(5, couleur)}, false);
-    btn6.addEventListener("click", function(){jouer(6, couleur)}, false);}
+}
 
 
 async function jouer(colonne, couleur) {
-    console.log("button clicked");
-    var request_data = colonne;
-    var player = "joeureuse1"
-    console.log("data: " + request_data);
-    $.ajax({
-        url: "jouer/",
-        data : {
-            request_data: request_data,
-            player: player,
-        },
-        success : function(json) {
-            console.log("requested access complete");
-        }
-    })
-    tour();
     for (let i = 0; i < rangee; i++) {
         let first = document.querySelector(`[name="${i}${colonne}"]`)
         if (first.getAttribute('class') === 'cercle') {
@@ -110,15 +109,19 @@ async function jouer(colonne, couleur) {
         }
     }
     edit_matrice()
+    tour();
+    console.log("button clicked");
 }
+
+
 
 function edit_matrice() {
     let board = document.querySelector("#board");
     let rangees = board.querySelectorAll("tr");
-    for (let i = 0; i < rangees.length(); i++) {
-        let colonnes = rangee.querySelectorAll('td')
-        for (let j = 0; j < colonnes.length(); j++) {
-            classe = colonne.getAttribute('class')
+    for (let i = 0; i < rangees.length; i++) {
+        let colonnes = rangees[i].querySelectorAll('td')
+        for (let j = 0; j < colonnes.length; j++) {
+            classe = colonnes[j].children[0].getAttribute('class')
             if (classe === 'yellow') {
                 matrice_jeu[i][j] = 'Y'
             }
@@ -126,11 +129,11 @@ function edit_matrice() {
                 matrice_jeu[i][j] = 'R'
             }
             else {
-                matrice_jeu[i][j] = ' '
+                matrice_jeu[i][j] = ''
             }
         }
     }
-
+    console.log(matrice_jeu)
 }
 
 function game() {

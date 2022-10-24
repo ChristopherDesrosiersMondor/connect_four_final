@@ -1,6 +1,8 @@
 import json
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from requests import Response
+from urllib3 import HTTPResponse
 from connect_four.jeu import *
 import pickle
 # Create your views here.
@@ -19,12 +21,21 @@ def home_try(request):
     )
 
 def jouer(request):
-    board = Board(6, 7)
-    board.updater_board('Y', board.first_empty_node(4))
+    matrice = json.loads(request.GET.get('matrice'))
 
-    with open('connect_four/board.dat', 'wb') as file:
-         pickle.dump(board, file)
-    return HttpResponse("session is set")
+    ai  = Ai_C4('R', 'Y')
+
+    board = Board(6, 7)
+    for i in range(board.rangees):
+        for j in range(board.colonnes):
+            board.matrice_jeu[i][j].valeur = matrice[i][j]
+
+    colonne = ai.jouer(board)
+
+    win, winner = board.check_for_win()
+
+    response = JsonResponse(colonne, safe=False)
+    return response
 
 def print_state(request):
     board = None
