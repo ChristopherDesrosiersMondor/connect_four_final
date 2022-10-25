@@ -174,6 +174,25 @@ class Board:
             mat_string += f"{str(node)}"
         return mat_string
 
+    def fill(self, matrice: list):
+        for i in range(len(matrice)):
+            for j in range(len(matrice[0])):
+                self.matrice_jeu[i][j].valeur = matrice[i][j]
+
+    def board_to_matrice(self) -> list:
+        matrice = []
+        for rangee in self.matrice_jeu:
+            list_rangee = []
+            for node in rangee:
+                list_rangee.append(node.valeur)
+            matrice.append(list_rangee)
+        return matrice
+    
+    def unfill(self) -> None:
+        for rangee in self.matrice_jeu:
+            for node in rangee:
+                node.valeur = ''
+
     def node_voisinage(self) -> None:
         """
         Source: https://stackoverflow.com/questions/7872838/one-line-if-condition-assignment
@@ -218,7 +237,11 @@ class Board:
                 current_node = current_node.up
             else:
                 empty = True
-        return current_node
+
+        if empty:
+            return current_node
+        
+        return None
 
 
     def updater_board(self, jeton: str, node: Node) -> None:
@@ -338,51 +361,13 @@ class Ai_C4(Joueureuse):
         self.root = None
         self.tree = {}
         self.next_moves = []
+        self.temp_board = Board(6, 7)
     
     def jouer(self, board: Board) -> int:
         colonne = self.next_move(board)
-        # TNode.print_pretty(self.root)
-        # with open('test.txt', 'w', encoding='utf-8') as file:
-        #     file.write(TNode.tree_rep)
-        # TNode.tree_rep = ""
         node_to_modify = board.first_empty_node(colonne)
         board.updater_board(self.jeton, node_to_modify)
         return colonne
-
-    def draw_solution(self):
-        self.draw_tree(self.root, 0)
-        affichage = ""
-        for niveau, list_node in self.tree.items():
-            for node in list_node:
-                # if node.data[1] == inf or node.data[1] == -inf:
-                affichage += f" {niveau}: v:{node.data[1]} c:{node.data[2]} "
-            affichage += "\n"
-        
-        print(affichage)
-
-    def draw_last(self):
-        self.draw_tree(self.root, 0)
-        affichage = ""
-        for niveau, list_node in self.tree.items():
-            try:
-                self.tree[niveau+1]
-            except:
-                highest_node = max(list_node)
-                lowest_node = min(list_node)
-                affichage += f"high: {highest_node.data[1]} low:{lowest_node.data[1]}"
-
-        print(affichage)
-
-    def draw_tree(self, node: TNode, k: int):
-        if not node.enfants:
-            return
-        
-        for node in node.enfants:
-            if k not in self.tree:
-                self.tree[k] = [node]
-            else:
-                self.tree[k].append(node)
-            self.draw_tree(node, (k+1))
 
 
     def node_value(self, node: Node) -> int:
@@ -393,7 +378,6 @@ class Ai_C4(Joueureuse):
 
         return score_vertical + score_horizontal + score_frontslash + score_backslash
         
-    #on devrait l'appeler jouer comme dans la classe parent
     def jouer_colonne(self, jeton: str, board: Board, colonne: int) -> Board:
         node_jouer = board.first_empty_node(colonne)
         if node_jouer:
@@ -410,15 +394,30 @@ class Ai_C4(Joueureuse):
                     valeur -= self.node_value(node)
         return valeur
 
-    def possible_moves(self, board: Board, jeton: str) -> list:
+    # def possible_moves(self, board: Board, jeton: str) -> list:
+    #     data = []
+    #     for col in range(1, board.colonnes + 1):
+    #         this_board = copy.deepcopy(board)
+    #         this_board = self.jouer_colonne(jeton, this_board, col)
+    #         # print(this_board)
+    #         # print(self.board_value(this_board))
+    #         data.append((this_board, self.board_value(this_board), col))
+    #         # node_jouer.valeur = ""
+    #     return data
+
+
+    def possible_moves(self, board_state: list, jeton: str) -> list:
         data = []
-        for col in range(1, board.colonnes + 1):
-            this_board = copy.deepcopy(board)
-            this_board = self.jouer_colonne(jeton, this_board, col)
-            # print(this_board)
-            # print(self.board_value(this_board))
-            data.append((this_board, self.board_value(this_board), col))
-            # node_jouer.valeur = ""
+        for col in range(1, self.temp_board.colonnes + 1):
+            self.temp_board.fill(board_state)
+            this_board = self.temp_board
+            node_jouer = this_board.first_empty_node(col)
+            if node_jouer:
+                this_board.updater_board(jeton, node_jouer)
+                board_value = self.board_value(this_board)
+                data.append((this_board.board_to_matrice(), board_value, col))
+                if board_value == inf or board_value == -inf:
+                    return data
         return data
 
 
@@ -430,8 +429,8 @@ class Ai_C4(Joueureuse):
         # node data = (board, value) change == pour != si h est impair
         jeton = self.jeton if h % 2 != 0 else self.jeton_ennemi
         
-        temp_board = copy.deepcopy(node.data[0])
-        coups_possibles = self.possible_moves(temp_board, jeton)
+        board_state = node.data[0]
+        coups_possibles = self.possible_moves(board_state, jeton)
         for data in coups_possibles:
             node.enfants.append(TNode(node, data))
 
@@ -470,7 +469,9 @@ class Ai_C4(Joueureuse):
         return path, best_leave
 
     def next_move(self, board: Board, h: int = HAUTEUR) -> int:
-        self.root = TNode(None, (board, (self.board_value(board)), None))
+        board_state = board.board_to_matrice()
+        self.root = TNode(None, (board_state, (self.board_value(self.temp_board)), None))
+        self.temp_board.unfill()
         self.moves(self.root, h)
         best_path, best_leave = self.best_path(self.root)
         return best_path.data[2]
