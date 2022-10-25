@@ -1,0 +1,32 @@
+<!--
+    Source: https://codepen.io/Hyperplexed/pen/zYWvXMM
+    Utilisation: avoir une belle page d'accueil - Nous avons simplement modifier le code, ce code n'est pas de nous.
+-->
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Portfolio django</title>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'connect_four/css/accueil.css' %}">
+    </head>
+    <body>
+        <div id="tiles"></div>
+
+        <h1 id="title" class="centered">
+          The name of the game is
+          <span class="fancy">Connect Four</span>.
+        </h1>
+        
+        <p id="icon" class="fa-solid fa-chess centered">Bienvenue a notre projet de portfolio!</p>
+        <a class="button" href="{% url 'jeu' %}">Essayer le jeu!</a>
+
+
+
+        {% load static %}
+        <script type="text/javascript" src="{% static 'connect_four/js/anime.min.js' %}"></script> 
+        <script type="text/javascript" src="{% static 'connect_four/js/accueil.js' %}"></script>    
+    </body>
+</html>

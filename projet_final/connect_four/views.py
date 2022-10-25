@@ -8,7 +8,7 @@ from connect_four.jeu import *
 def home(request):
     return render(
         request,
-        'connect_four/base.html'
+        'connect_four/accueil.html'
     )
 
 def home_try(request):
