@@ -1,8 +1,6 @@
 import json
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from requests import Response
-from urllib3 import HTTPResponse
 from connect_four.jeu import *
 import pickle
 # Create your views here.
