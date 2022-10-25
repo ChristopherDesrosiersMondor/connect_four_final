@@ -111,6 +111,8 @@ function update_state() {
 }
 
 async function jouer_ai(colonne, couleur) {
+    let topBoutons = document.querySelector('.rangeBoard')
+    topBoutons.style.visibility = 'hidden'
     animation(colonne, couleur)
     update_state()
 }
@@ -118,7 +120,7 @@ async function jouer_ai(colonne, couleur) {
 async function jouer(event) {
     let topBoutons = document.querySelector('.rangeBoard')
     topBoutons.style.visibility = 'hidden'
-    
+
     let couleur = event.currentTarget.couleur
     let colonne = event.currentTarget.col
     animation(colonne, couleur)
