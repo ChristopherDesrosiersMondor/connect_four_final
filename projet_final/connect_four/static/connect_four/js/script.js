@@ -97,10 +97,9 @@ async function tour() {
 
 
 async function jouer(colonne, couleur) {
-    var topBoutons = document.querySelectorAll('.topBouton')
-    for (bouton in topBoutons) {
-    bouton.disabled = "disabled";
-    }
+    let topBoutons = document.querySelector('.rangeBoard')
+    topBoutons.style.visibility = 'hidden'
+
     for (let i = 0; i < rangee; i++) {
         let first = document.querySelector(`[name="${i}${colonne}"]`)
         if (first.getAttribute('class') === 'cercle') {
