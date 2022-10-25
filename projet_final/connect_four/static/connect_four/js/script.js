@@ -10,7 +10,7 @@ var matrice_jeu = []
 // Utilisation: envoyer des requetes a d'autres views a partir de js avec jquery et ajax
 
 function initialiser_board() {
-    var nbTours = 0;
+    nbTours = 0;
     let board = document.querySelector("#board")
     board.innerHTML = ""
     board.setAttribute('class', 'board')
@@ -84,22 +84,22 @@ async function tour() {
         let btn5 = document.querySelector('#btn5');
         let btn6 = document.querySelector('#btn6');
         
-        btn0.addEventListener("click", function(){jouer(0, couleur)}, tour, false);
-        btn1.addEventListener("click", function(){jouer(1, couleur)}, tour, false);
-        btn2.addEventListener("click", function(){jouer(2, couleur)}, tour, false);
-        btn3.addEventListener("click", function(){jouer(3, couleur)}, tour, false);
-        btn4.addEventListener("click", function(){jouer(4, couleur)}, tour, false);
-        btn5.addEventListener("click", function(){jouer(5, couleur)}, tour, false);
-        btn6.addEventListener("click", function(){jouer(6, couleur)}, tour, false);
+        btn0.addEventListener("click", function(){jouer(0, couleur)}, false);
+        btn1.addEventListener("click", function(){jouer(1, couleur)}, false);
+        btn2.addEventListener("click", function(){jouer(2, couleur)}, false);
+        btn3.addEventListener("click", function(){jouer(3, couleur)}, false);
+        btn4.addEventListener("click", function(){jouer(4, couleur)}, false);
+        btn5.addEventListener("click", function(){jouer(5, couleur)}, false);
+        btn6.addEventListener("click", function(){jouer(6, couleur)}, false);
 
     }
 }
 
 
 async function jouer(colonne, couleur) {
-    topBoutons = document.querySelectorAll('.topBouton')
+    var topBoutons = document.querySelectorAll('.topBouton')
     for (bouton in topBoutons) {
-    bouton.disabled = true
+    bouton.disabled = "disabled";
     }
     for (let i = 0; i < rangee; i++) {
         let first = document.querySelector(`[name="${i}${colonne}"]`)
@@ -113,6 +113,7 @@ async function jouer(colonne, couleur) {
         }
     }
     edit_matrice()
+    tour()
     console.log("button clicked");
 }
 
