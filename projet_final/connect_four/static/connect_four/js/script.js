@@ -158,4 +158,3 @@ boutonInit.addEventListener("click", function(){initialiser_board(colonne, range
 
 
 
-

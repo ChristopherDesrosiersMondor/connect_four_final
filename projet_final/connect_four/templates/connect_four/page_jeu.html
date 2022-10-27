@@ -8,8 +8,13 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js""></script>
     </head>
     <body>
-        <div id="boutonDiv">
-            <input id="boutonInit" type="submit" value="Initialiser le jeu">
+        <div id="left-container">
+            <div id="boutonDiv">
+                <input class="neon_btn" id="boutonInit" type="submit" value="Initialiser le jeu">
+            </div>
+            <div id="boutonDiv">
+                <a class="neon_btn" href="{% url 'reglement' %}" id="boutonRegles">Reglements et strategies</a>
+            </div>
         </div>
         <table id="topBoard"></table>
         <table id="board"></table>
