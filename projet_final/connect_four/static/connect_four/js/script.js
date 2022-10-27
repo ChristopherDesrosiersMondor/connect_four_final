@@ -68,7 +68,12 @@ async function tour() {
             },
             success : function(response) {
                 console.log(response)
-                jouer(response - 1, couleur)
+                let colonne = response.col
+                jouer(colonne - 1, couleur)
+                if (response.win){
+                    console.log(response.winner + ' a gagner!')
+                    initialiser_board()
+                }
             }
         })
     }

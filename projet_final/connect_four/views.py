@@ -31,5 +31,11 @@ def jouer(request):
 
     win, winner = board.check_for_win()
 
-    response = JsonResponse(colonne, safe=False)
+    data = {
+        'col': colonne, 
+        'win': win,
+        'winner': winner
+    }
+
+    response = JsonResponse(data, safe=False)
     return response
