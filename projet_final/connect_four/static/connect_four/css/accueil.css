@@ -96,7 +96,7 @@
   }
   
   #icon {
-    color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.5);
     font-size: 5vw;
     opacity: 0;
     position: fixed;

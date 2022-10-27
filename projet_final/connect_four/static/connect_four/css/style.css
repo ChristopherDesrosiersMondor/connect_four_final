@@ -1,23 +1,26 @@
 body {
-    background-image: url('https://images4.alphacoders.com/114/1145990.jpg');
+    background-image: url("https://images4.alphacoders.com/114/1145990.jpg");
 }
 
 .board {
-    background-color: blue;
-    width: 700px;
-    height: 600px;
+    background: none;
+    filter: drop-shadow(0 0 15px #006b8d) drop-shadow(0 0 50px #006b8d) contrast(2) brightness(2);
+    opacity: 0.9;
+    width: 40%;
+    height: 40%;
     margin-left: auto;
     margin-right: auto;
-    border: 4px solid black;
+    border: 4px solid #006b8d;
+    border-radius: 5%;
     margin-top: 20px;
 }
 
 .topBoard {
-    width: 700px;
+    width: 40%;
     height: 100px;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 80px;
+    margin-top: 20px;
     margin-bottom: 0px;
 }
 
@@ -27,39 +30,56 @@ body {
 }
 
 .cercle {
-    width: 90px;
-    height: 90px;
+    width: 70px;
+    height: 70px;
     background-color: white;
     border-radius: 50%;
     margin: 10px;
-    border: 2px solid black;
+    border: 2px solid #05566e;
+    opacity: 1;
 }
 
 .red {
-    width: 90px;
-    height: 90px;
+    width: 70px;
+    height: 70px;
     background-color: red;
     border-radius: 50%;
     margin: 10px; 
-    border: 2px solid black;                                           
+    border: 2px solid #05566e;
+    opacity: 1;                                           
 }
 
 .yellow {
-    width: 90px;
-    height: 90px;
-    background-color: yellow;
+    width: 70px;
+    height: 70px;
+    background-color: #ffe811;
     border-radius: 50%;
     margin: 10px;
-    border: 2px solid black;
+    border: 2px solid #05566e;
+    opacity: 1;
 }
 
 #boutonDiv {
-    text-align: center;
-    margin-top: 30px
+    position: fixed;
+    left: auto;
 }
 
-
 #boutonInit {
-    background-color: rgb(206, 154, 206);
+    color: #db3eb1;
+    border: 6px solid #db3eb1;
+    border-radius:15px;
+    padding: 5px 15px;
+    font-size: 20px;
+    font-family: tahoma;
+    letter-spacing:3px;
+    cursor: pointer;
+    font-weight: bold;
+    filter: drop-shadow(0 0 15px #db3eb1) drop-shadow(0 0 50px #db3eb1) contrast(2) brightness(2);
+    background: none;
+}
+
+#boutonInit:hover {
+    background-color: #db3eb1;
+    color: black;
 }
 
