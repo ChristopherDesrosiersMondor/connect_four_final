@@ -1,5 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
+
 body {
     background-image: url("https://images4.alphacoders.com/114/1145990.jpg");
+    width: 100%;
+    height: 100%;
 }
 
 .board {
@@ -81,5 +86,22 @@ body {
 #boutonInit:hover {
     background-color: #db3eb1;
     color: black;
+}
+
+.reglement {
+    background-color: #006b8d;
+    filter: drop-shadow(0 0 15px #006b8d) drop-shadow(0 0 50px #006b8d) contrast(2) brightness(2);
+    opacity: 0.9;
+    width: 40%;
+    min-height: 60%;
+    border: 4px solid #006b8d;
+    border-radius: 5%;
+    display: block;
+    padding: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10%;
+    text-align: justify;
+    font-family: 'Roboto Mono', monospace;
 }
 

@@ -1,0 +1,31 @@
+<!-- https://reglesdejeux.github.io/regles-du-jeu-connect-four/index.html -->
+<!-- Utilisation: description des règlements de puissance 4 -->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Puissance 4</title>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'connect_four/css/style.css' %}">
+    </head>
+    <body>
+        <div class="reglement"><p>Connect-Four est un jeu à deux joueurs ressemblant à un tic-tac-toe dans
+
+            lequel les joueurs placent les dames en alternance sur un tableau vertical.<br><br>
+
+            Le tableau de jeu est composé de 7 colonnes et de 6 rangées de haut. On joue à chaque fois avec une couleur particulière (généralement jaune et rouge, ou noir et rouge).<br><br>
+    
+    L’objectif du jeu est d’être le premier à obtenir 4 pions alignés horizontalement, verticalement ou en diagonale.
+    
+    Les nouveaux pions dans une colonne sont toujours placés au-dessus des autres pions ou sur la ligne des bas.
+    
+    Lorsqu'une colonne a 6 pièces, elle est pleine et il est impossible d'ajouter des pions supplémentaires.
+    
+    Si personne ne réussit à aligner 4 jetons et que toutes les colonnes sont pleines, la partie est nulle.
+    </p>
+        </div>
+
+        {% load static %}
+    </body>
+</html>

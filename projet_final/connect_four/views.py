@@ -39,3 +39,10 @@ def jouer(request):
 
     response = JsonResponse(data, safe=False)
     return response
+
+
+def reglement(request):
+    return render(
+        request,
+        'connect_four/reglement.html'
+    )
