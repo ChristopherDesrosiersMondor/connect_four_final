@@ -10,7 +10,7 @@ var matrice_jeu = []
 // Utilisation: envoyer des requetes a d'autres views a partir de js avec jquery et ajax
 
 function initialiser_board() {
-    nbTours = 0;
+    nbTours = 1;
     let board = document.querySelector("#board")
     board.innerHTML = ""
     board.setAttribute('class', 'board')
@@ -30,7 +30,8 @@ function initialiser_board() {
         }
     }
     // game();
-    tour();
+    let couleur = couleur2
+    topJetons(couleur)
 }
 
 function topJetons(couleur) {
@@ -47,6 +48,23 @@ function topJetons(couleur) {
         boutonJeton.setAttribute('id', `btn${i}`);
         td.append(boutonJeton);
         tr.append(td);
+    }
+    if (couleur === 'yellow') {
+        let btn0 = document.querySelector('#btn0');
+        let btn1 = document.querySelector('#btn1');
+        let btn2 = document.querySelector('#btn2');
+        let btn3 = document.querySelector('#btn3');
+        let btn4 = document.querySelector('#btn4');
+        let btn5 = document.querySelector('#btn5');
+        let btn6 = document.querySelector('#btn6');
+        
+        btn0.addEventListener("click", function(){jouer(0, couleur)}, false);
+        btn1.addEventListener("click", function(){jouer(1, couleur)}, false);
+        btn2.addEventListener("click", function(){jouer(2, couleur)}, false);
+        btn3.addEventListener("click", function(){jouer(3, couleur)}, false);
+        btn4.addEventListener("click", function(){jouer(4, couleur)}, false);
+        btn5.addEventListener("click", function(){jouer(5, couleur)}, false);
+        btn6.addEventListener("click", function(){jouer(6, couleur)}, false);
     }
 }
 
@@ -66,10 +84,10 @@ async function tour() {
             data : {
                 matrice: JSON.stringify(matrice_jeu)
             },
-            success : function(response) {
+            success : async function(response) {
                 console.log(response)
                 let colonne = response.col
-                jouer(colonne - 1, couleur)
+                await jouer(colonne - 1, couleur)
                 if (response.win){
                     console.log(response.winner + ' a gagner!')
                     initialiser_board()
@@ -80,23 +98,6 @@ async function tour() {
     else {
         couleur = couleur2;
         topJetons(couleur)
-
-        let btn0 = document.querySelector('#btn0');
-        let btn1 = document.querySelector('#btn1');
-        let btn2 = document.querySelector('#btn2');
-        let btn3 = document.querySelector('#btn3');
-        let btn4 = document.querySelector('#btn4');
-        let btn5 = document.querySelector('#btn5');
-        let btn6 = document.querySelector('#btn6');
-        
-        btn0.addEventListener("click", function(){jouer(0, couleur)}, false);
-        btn1.addEventListener("click", function(){jouer(1, couleur)}, false);
-        btn2.addEventListener("click", function(){jouer(2, couleur)}, false);
-        btn3.addEventListener("click", function(){jouer(3, couleur)}, false);
-        btn4.addEventListener("click", function(){jouer(4, couleur)}, false);
-        btn5.addEventListener("click", function(){jouer(5, couleur)}, false);
-        btn6.addEventListener("click", function(){jouer(6, couleur)}, false);
-
     }
 }
 
