@@ -105,3 +105,6 @@ body {
     font-family: 'Roboto Mono', monospace;
 }
 
+.information {
+    white-space: pre-wrap;
+}
