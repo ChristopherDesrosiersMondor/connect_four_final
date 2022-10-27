@@ -105,6 +105,7 @@
     pointer-events: none;
     transition: opacity 1200ms ease;
     z-index: 1;
+    text-align: center;
   }
   
 /*
@@ -129,6 +130,7 @@ Utilisation: cool bouton neon
     bottom: 10%;
     pointer-events: all;
     z-index: 1;
+    text-align: center;
 }
 
 .button:hover {

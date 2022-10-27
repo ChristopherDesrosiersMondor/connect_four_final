@@ -1,5 +1,5 @@
 body {
-    background-color: #D3D3D3;
+    background-image: url('https://images4.alphacoders.com/114/1145990.jpg');
 }
 
 .board {
@@ -56,5 +56,10 @@ body {
 #boutonDiv {
     text-align: center;
     margin-top: 30px
+}
+
+
+#boutonInit {
+    background-color: rgb(206, 154, 206);
 }
 
