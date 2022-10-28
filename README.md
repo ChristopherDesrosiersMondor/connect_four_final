@@ -14,6 +14,7 @@ en python. Le tout est géré par Django.
 
 ## Contribution
 Un énorme merci à Keven Presseau St-Laurent pour le challenge, les réflexions, l'aide à résoudre l'heuristique de l'AI et pour ses précieux conseils pédagogiques. 
+
 Auteur.e.s:
 -Christopher Desrosiers Mondor
 -Valérie Ouellette
