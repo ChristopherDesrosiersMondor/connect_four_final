@@ -308,19 +308,19 @@ class Board:
             node_directions = current_node.directions()
             #N N
             for i in range(3):
-                if node_directions[d] is not None and (node_directions[d].valeur == '' or node_directions[d].valeur == current_node.valeur):
+                if node_directions[d] is not None and (node_directions[d].valeur == '' or node_directions[d].valeur == valeur):
                     to_evaluate.append(node_directions[d])
                     current_node = node_directions[d]
                     espace += 1
-            for num, node in enumerate(to_evaluate):
+            for node in to_evaluate:
                 if node.valeur == valeur:
                     count += 10
                 if node.valeur == '':
                     count += 1
-                if num+1 < len(to_evaluate) and node.valeur == to_evaluate[num+1]:
-                    count += 50
-                if num+2 < len(to_evaluate) and node.valeur == to_evaluate[num+2]:
-                    count += 80
+                if count_same_value == 2:
+                    count *= 2
+                if count_same_value == 3:
+                    count *= 3
 
             if espace < 4:
                 count = 0
@@ -341,14 +341,14 @@ class Joueureuse:
 #Travailler sur une copie du board
 class Ai_C4(Joueureuse):
     HAUTEUR  = 5
-    losing_nodes = {
-        0: {},
-        1: {},
-        2: {},
-        3: {},
-        4: {},
-        5: {}
-    }
+    # losing_nodes = {
+    #     0: {},
+    #     1: {},
+    #     2: {},
+    #     3: {},
+    #     4: {},
+    #     5: {}
+    # }
     """Definit un ai pouvant jouer contre une personne automatiquement"""
     def __init__(self, jeton_color: str, jeton_ennemi: str) -> None:
         super().__init__(jeton_color)
@@ -390,17 +390,6 @@ class Ai_C4(Joueureuse):
                 elif node.valeur == self.jeton_ennemi:
                     valeur -= self.node_value(node)
         return valeur
-
-    # def possible_moves(self, board: Board, jeton: str) -> list:
-    #     data = []
-    #     for col in range(1, board.colonnes + 1):
-    #         this_board = copy.deepcopy(board)
-    #         this_board = self.jouer_colonne(jeton, this_board, col)
-    #         # print(this_board)
-    #         # print(self.board_value(this_board))
-    #         data.append((this_board, self.board_value(this_board), col))
-    #         # node_jouer.valeur = ""
-    #     return data
 
 
     def possible_moves(self, board_state: list, jeton: str) -> list:
@@ -456,14 +445,13 @@ class Ai_C4(Joueureuse):
 
     @staticmethod
     def valeur(node: TNode, adversaire: bool = False):
-        data = ""
-        for n in node.enfants:
-            h, col = Ai_C4.hauteur(n)
-            if col in Ai_C4.losing_nodes[h]:
-                Ai_C4.losing_nodes[h][col].append(n)
-            else:
-                Ai_C4.losing_nodes[h][col] = []
-                Ai_C4.losing_nodes[h][col].append(n)
+        # for n in node.enfants:
+        #     h, col = Ai_C4.hauteur(n)
+        #     if col in Ai_C4.losing_nodes[h]:
+        #         Ai_C4.losing_nodes[h][col].append(n)
+        #     else:
+        #         Ai_C4.losing_nodes[h][col] = []
+        #         Ai_C4.losing_nodes[h][col].append(n)
         if not node.enfants:
             return node
         elif adversaire:
@@ -530,21 +518,6 @@ def main():
     ai = Ai_C4("R", valerie.jeton)
 
     ai_game(board, valerie, ai)
-
-    # valerie.jouer(board, 4)
-    # ai.jouer(board)
-
-    # valerie.jouer(board, 1)
-    # ai.jouer(board)
-
-    # valerie.jouer(board, 1)
-    # ai.jouer(board)
-
-    # valerie.jouer(board, 1)
-    # ai.jouer(board)
-
-    # print(board)
-    # print(board.check_for_win())
 
 if __name__ == "__main__":
     main()
