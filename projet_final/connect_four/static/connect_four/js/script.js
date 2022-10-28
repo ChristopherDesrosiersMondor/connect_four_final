@@ -5,6 +5,7 @@ const couleur2 = 'yellow';
 var nbTours = 0;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 var matrice_jeu = []
+const message = document.querySelector(".message")
 
 // Source: pluralsight.com/guides/work-with-ajax-django
 // Utilisation: envoyer des requetes a d'autres views a partir de js avec jquery et ajax
@@ -50,21 +51,30 @@ function topJetons(couleur) {
         tr.append(td);
     }
     if (couleur === 'yellow') {
-        let btn0 = document.querySelector('#btn0');
-        let btn1 = document.querySelector('#btn1');
-        let btn2 = document.querySelector('#btn2');
-        let btn3 = document.querySelector('#btn3');
-        let btn4 = document.querySelector('#btn4');
-        let btn5 = document.querySelector('#btn5');
-        let btn6 = document.querySelector('#btn6');
+        message.innerHTML = "c'est ton tour!"
+        let boutons = document.querySelectorAll(".topBouton")
+
+        for (let i = 0; i < boutons.length; i++) {
+            boutons[i].addEventListener("click", function(){jouer(i, couleur)}, false)
+        }
+        // let btn0 = document.querySelector('#btn0');
+        // let btn1 = document.querySelector('#btn1');
+        // let btn2 = document.querySelector('#btn2');
+        // let btn3 = document.querySelector('#btn3');
+        // let btn4 = document.querySelector('#btn4');
+        // let btn5 = document.querySelector('#btn5');
+        // let btn6 = document.querySelector('#btn6');
         
-        btn0.addEventListener("click", function(){jouer(0, couleur)}, false);
-        btn1.addEventListener("click", function(){jouer(1, couleur)}, false);
-        btn2.addEventListener("click", function(){jouer(2, couleur)}, false);
-        btn3.addEventListener("click", function(){jouer(3, couleur)}, false);
-        btn4.addEventListener("click", function(){jouer(4, couleur)}, false);
-        btn5.addEventListener("click", function(){jouer(5, couleur)}, false);
-        btn6.addEventListener("click", function(){jouer(6, couleur)}, false);
+        // btn0.addEventListener("click", function(){jouer(0, couleur)}, false);
+        // btn1.addEventListener("click", function(){jouer(1, couleur)}, false);
+        // btn2.addEventListener("click", function(){jouer(2, couleur)}, false);
+        // btn3.addEventListener("click", function(){jouer(3, couleur)}, false);
+        // btn4.addEventListener("click", function(){jouer(4, couleur)}, false);
+        // btn5.addEventListener("click", function(){jouer(5, couleur)}, false);
+        // btn6.addEventListener("click", function(){jouer(6, couleur)}, false);
+    }
+    else {
+        message.innerHTML = "c'est le tour de <br/> l'ordinateur"
     }
 }
 
