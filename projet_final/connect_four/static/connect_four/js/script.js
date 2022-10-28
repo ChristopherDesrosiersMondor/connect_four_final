@@ -5,13 +5,15 @@ const couleur2 = 'yellow';
 var nbTours = 0;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 var matrice_jeu = []
+const message = document.querySelector(".message")
 
 // Source: pluralsight.com/guides/work-with-ajax-django
 // Utilisation: envoyer des requetes a d'autres views a partir de js avec jquery et ajax
 
 function initialiser_board() {
     nbTours = 1;
-    let board = document.querySelector("#board")
+    const board = document.querySelector("#board")
+    board.setAttribute('style', 'visibility: visible')
     board.innerHTML = ""
     board.setAttribute('class', 'board')
     for (let i = 0; i < rangee; i ++) {
@@ -29,13 +31,13 @@ function initialiser_board() {
             matrice_jeu[i][j] = ''
         }
     }
-    // game();
     let couleur = couleur2
     topJetons(couleur)
 }
 
 function topJetons(couleur) {
-    let topBoard = document.querySelector("#topBoard")
+    const topBoard = document.querySelector("#topBoard")
+    topBoard.setAttribute('style', 'visibility: visible')
     topBoard.setAttribute('class', 'topBoard')
     topBoard.innerHTML = ""
     const tr = document.createElement("tr");
@@ -50,21 +52,30 @@ function topJetons(couleur) {
         tr.append(td);
     }
     if (couleur === 'yellow') {
-        let btn0 = document.querySelector('#btn0');
-        let btn1 = document.querySelector('#btn1');
-        let btn2 = document.querySelector('#btn2');
-        let btn3 = document.querySelector('#btn3');
-        let btn4 = document.querySelector('#btn4');
-        let btn5 = document.querySelector('#btn5');
-        let btn6 = document.querySelector('#btn6');
+        message.innerHTML = "c'est ton tour!"
+        let boutons = document.querySelectorAll(".topBouton")
+
+        for (let i = 0; i < boutons.length; i++) {
+            boutons[i].addEventListener("click", function(){jouer(i, couleur)}, false)
+        }
+        // let btn0 = document.querySelector('#btn0');
+        // let btn1 = document.querySelector('#btn1');
+        // let btn2 = document.querySelector('#btn2');
+        // let btn3 = document.querySelector('#btn3');
+        // let btn4 = document.querySelector('#btn4');
+        // let btn5 = document.querySelector('#btn5');
+        // let btn6 = document.querySelector('#btn6');
         
-        btn0.addEventListener("click", function(){jouer(0, couleur)}, false);
-        btn1.addEventListener("click", function(){jouer(1, couleur)}, false);
-        btn2.addEventListener("click", function(){jouer(2, couleur)}, false);
-        btn3.addEventListener("click", function(){jouer(3, couleur)}, false);
-        btn4.addEventListener("click", function(){jouer(4, couleur)}, false);
-        btn5.addEventListener("click", function(){jouer(5, couleur)}, false);
-        btn6.addEventListener("click", function(){jouer(6, couleur)}, false);
+        // btn0.addEventListener("click", function(){jouer(0, couleur)}, false);
+        // btn1.addEventListener("click", function(){jouer(1, couleur)}, false);
+        // btn2.addEventListener("click", function(){jouer(2, couleur)}, false);
+        // btn3.addEventListener("click", function(){jouer(3, couleur)}, false);
+        // btn4.addEventListener("click", function(){jouer(4, couleur)}, false);
+        // btn5.addEventListener("click", function(){jouer(5, couleur)}, false);
+        // btn6.addEventListener("click", function(){jouer(6, couleur)}, false);
+    }
+    else {
+        message.innerHTML = "c'est le tour de <br/> l'ordinateur"
     }
 }
 
@@ -89,8 +100,11 @@ async function tour() {
                 let colonne = response.col
                 await jouer(colonne - 1, couleur)
                 if (response.win){
-                    console.log(response.winner + ' a gagner!')
-                    initialiser_board()
+                    // console.log(response.winner + ' a gagner!')
+                    // initialiser_board()
+                    message.innerHTML = response.winner + 'a gagné!'
+                    board.setAttribute('style', 'visibility: hidden')
+                    topBoard.setAttribute('style', 'visibility: hidden')
                 }
             }
         })
@@ -145,11 +159,6 @@ function edit_matrice() {
     console.log(matrice_jeu)
 }
 
-function game() {
-    for (i = 0; i < 10; i++) {
-        tour()
-    }
-}
 
 let boutonInit = document.querySelector("#boutonInit");
 boutonInit.addEventListener("click", function(){initialiser_board(colonne, rangee, 'yellow')}, false);

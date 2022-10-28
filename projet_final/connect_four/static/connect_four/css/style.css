@@ -82,19 +82,37 @@ body {
     border-radius:15px;
     padding: 5px 15px;
     font-size: 20px;
-    font-family: tahoma;
+    font-family: 'Roboto Mono', monospace;
     letter-spacing:3px;
     cursor: pointer;
     font-weight: bold;
     filter: drop-shadow(0 0 15px #db3eb1) drop-shadow(0 0 50px #db3eb1) contrast(2) brightness(2);
-    background: none;
+    background-color: rgb(0, 107, 141, .5);
     margin-bottom: 30px;
-    margin-top: 10px;
+    margin-top: 15%;
+    margin-left: 15px;
 }
 
 .neon_btn:hover {
     background-color: #db3eb1;
     color: black;
+}
+
+.message {
+    color: #db3eb1;
+    border: 6px solid #db3eb1;
+    border-radius:15px;
+    padding: 5px 15px;
+    font-size: 20px;
+    font-family: 'Roboto Mono', monospace;
+    letter-spacing:3px;
+    font-weight: bold;
+    filter: drop-shadow(0 0 15px #db3eb1) drop-shadow(0 0 50px #db3eb1) contrast(2) brightness(2);
+    background-color: black;
+    margin-bottom: 30px;
+    margin-top: 40%;
+    height: 100px;
+    margin-left: 20px;
 }
 
 a {
@@ -156,4 +174,14 @@ td {
 
 #back_rules {
     visibility: hidden;
+}
+
+.flex-box-jeu {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+#right-container {
+    margin-left: 5%;
 }
