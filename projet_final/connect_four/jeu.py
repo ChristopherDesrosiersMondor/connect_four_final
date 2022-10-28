@@ -89,27 +89,7 @@ class TNode:
         return value
 
                 #https://stackoverflow.com/questions/1649027/how-do-i-print-out-a-tree-structure
-                # 
-                #  {    
-        #    public void PrintPretty(string indent, bool last)
-        #    {
-        #        Console.Write(indent);
-        #        if (last)
-        #        {
-        #            Console.Write("\\-");
-        #            indent += "  ";
-        #        }
-        #        else
-        #        {
-        #            Console.Write("|-");
-        #            indent += "| ";
-        #        }
-        #        Console.WriteLine(Name);
 
-        #        for (int i = 0; i < Children.Count; i++)
-        #            Children[i].PrintPretty(indent, i == Children.Count - 1);
-        #    }
-        # }
     @staticmethod
     def last(node: 'TNode') -> bool:
         if not node.enfants:
@@ -314,28 +294,34 @@ class Board:
     @staticmethod
     def check_direction_possible_win(node: Node, d1: str, d2: str):
         count = 2
+        valeur = node.valeur
         count_same_value = Board.check_direction(node, d1, d2)
+        if count_same_value >= 4:
+            count = inf
+            return count
+            
         espace = 1
         list = [d1, d2]
         for d in list :
             current_node = node
             node_directions = current_node.directions()
+            #N N 
+            to_evaluate = []
             for i in range(3):
-                if node_directions[d] is not None and (node_directions[d].valeur == node.valeur or node_directions[d].valeur == ''):
-                    if node_directions[d].valeur == node.valeur:
-                        count += 10
-                        count *= 2
-                    else:
-                        count += 1
+                if node_directions[d] is not None and (node_directions[d].valeur == '' or node_directions[d].valeur == current_node.valeur):
+                    to_evaluate.append(current_node)
                     current_node = node_directions[d]
-                    node_directions = current_node.directions()
                     espace += 1
+            if espace < 4:
+                continue
+            for node in to_evaluate:
+                if node.valeur == valeur:
+                    count += 10
+                elif node.valeur == '':
+                    count += 1
 
-        if espace < 4:
-            count = 0
-        
-        if count_same_value >= 4:
-            count = inf
+        # if espace < 4:
+        #     count = 0
         
         return count
 
@@ -353,6 +339,14 @@ class Joueureuse:
 #Travailler sur une copie du board
 class Ai_C4(Joueureuse):
     HAUTEUR  = 5
+    losing_nodes = {
+        0: {},
+        1: {},
+        2: {},
+        3: {},
+        4: {},
+        5: {}
+    }
     """Definit un ai pouvant jouer contre une personne automatiquement"""
     def __init__(self, jeton_color: str, jeton_ennemi: str) -> None:
         super().__init__(jeton_color)
@@ -362,6 +356,7 @@ class Ai_C4(Joueureuse):
         self.tree = {}
         self.next_moves = []
         self.temp_board = Board(6, 7)
+
     
     def jouer(self, board: Board) -> int:
         colonne = self.next_move(board)
@@ -416,8 +411,8 @@ class Ai_C4(Joueureuse):
                 this_board.updater_board(jeton, node_jouer)
                 board_value = self.board_value(this_board)
                 data.append((this_board.board_to_matrice(), board_value, col))
-                if board_value == inf or board_value == -inf:
-                    return data
+                # if board_value == inf or board_value == -inf:
+                #     return data
         return data
 
 
@@ -449,10 +444,28 @@ class Ai_C4(Joueureuse):
         return self.valeur_enfants(node, valeur)
 
     @staticmethod
+    def hauteur(node, colonne = "", h = 0):
+        if not node.parent:
+            return h, colonne
+        colonne_parent = node.parent.data[2]
+        if colonne_parent is None:
+            colonne_parent = 0
+        return Ai_C4.hauteur(node.parent, str(colonne_parent)+str(colonne), h+1)
+
+    @staticmethod
     def valeur(node: TNode, adversaire: bool = False):
+        data = ""
+        for n in node.enfants:
+            h, col = Ai_C4.hauteur(n)
+            if col in Ai_C4.losing_nodes[h]:
+                Ai_C4.losing_nodes[h][col].append(n)
+            else:
+                Ai_C4.losing_nodes[h][col] = []
+                Ai_C4.losing_nodes[h][col].append(n)
         if not node.enfants:
             return node
         elif adversaire:
+            
             return Ai_C4.valeur(min(node.enfants), not adversaire)
         else:
             nodes = []
@@ -466,14 +479,14 @@ class Ai_C4(Joueureuse):
         path = best_leave
         while path.parent.parent is not None:
             path = path.parent
-        return path, best_leave
+        return path
 
     def next_move(self, board: Board, h: int = HAUTEUR) -> int:
         board_state = board.board_to_matrice()
         self.root = TNode(None, (board_state, (self.board_value(self.temp_board)), None))
         self.temp_board.unfill()
         self.moves(self.root, h)
-        best_path, best_leave = self.best_path(self.root)
+        best_path = self.best_path(self.root)
         return best_path.data[2]
 
 
