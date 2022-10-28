@@ -40,6 +40,23 @@ def jouer(request):
     response = JsonResponse(data, safe=False)
     return response
 
+def jouer_adv(request):
+    matrice = json.loads(request.GET.get('matrice'))
+    
+    board = Board(6, 7)
+    for i in range(board.rangees):
+        for j in range(board.colonnes):
+            board.matrice_jeu[i][j].valeur = matrice[i][j]
+
+    win, winner = board.check_for_win()
+
+    data = {
+        'win': win,
+        'winner': winner
+    }
+
+    response = JsonResponse(data, safe=False)
+    return response
 
 def reglement(request):
     return render(

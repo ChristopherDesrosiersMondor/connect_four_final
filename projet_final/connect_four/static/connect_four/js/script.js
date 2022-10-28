@@ -6,11 +6,15 @@ var nbTours = 0;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 var matrice_jeu = []
 const message = document.querySelector(".message")
+let async_running = false
 
 // Source: pluralsight.com/guides/work-with-ajax-django
 // Utilisation: envoyer des requetes a d'autres views a partir de js avec jquery et ajax
 
 function initialiser_board() {
+    if (async_running){
+        await
+    }
     nbTours = 1;
     const board = document.querySelector("#board")
     board.setAttribute('style', 'visibility: visible')
@@ -58,21 +62,6 @@ function topJetons(couleur) {
         for (let i = 0; i < boutons.length; i++) {
             boutons[i].addEventListener("click", function(){jouer(i, couleur)}, false)
         }
-        // let btn0 = document.querySelector('#btn0');
-        // let btn1 = document.querySelector('#btn1');
-        // let btn2 = document.querySelector('#btn2');
-        // let btn3 = document.querySelector('#btn3');
-        // let btn4 = document.querySelector('#btn4');
-        // let btn5 = document.querySelector('#btn5');
-        // let btn6 = document.querySelector('#btn6');
-        
-        // btn0.addEventListener("click", function(){jouer(0, couleur)}, false);
-        // btn1.addEventListener("click", function(){jouer(1, couleur)}, false);
-        // btn2.addEventListener("click", function(){jouer(2, couleur)}, false);
-        // btn3.addEventListener("click", function(){jouer(3, couleur)}, false);
-        // btn4.addEventListener("click", function(){jouer(4, couleur)}, false);
-        // btn5.addEventListener("click", function(){jouer(5, couleur)}, false);
-        // btn6.addEventListener("click", function(){jouer(6, couleur)}, false);
     }
     else {
         message.innerHTML = "c'est le tour de <br/> l'ordinateur"
@@ -83,6 +72,7 @@ async function tour() {
     nbTours += 1;
     var couleur = null
     if (nbTours % 2 === 0) {
+        async_running = true
         couleur = couleur1;
         topJetons(couleur)
         var isAI = false
@@ -100,9 +90,7 @@ async function tour() {
                 let colonne = response.col
                 await jouer(colonne - 1, couleur)
                 if (response.win){
-                    // console.log(response.winner + ' a gagner!')
-                    // initialiser_board()
-                    message.innerHTML = response.winner + 'a gagné!'
+                    message.innerHTML = "L'ai a gagné!"
                     board.setAttribute('style', 'visibility: hidden')
                     topBoard.setAttribute('style', 'visibility: hidden')
                 }
@@ -110,6 +98,7 @@ async function tour() {
         })
     }
     else {
+        async_running = false
         couleur = couleur2;
         topJetons(couleur)
     }
@@ -132,6 +121,23 @@ async function jouer(colonne, couleur) {
         }
     }
     edit_matrice()
+
+    if (couleur === couleur2) {
+        $.ajax({
+            url: "jouer_adv/",
+            data : {
+                matrice: JSON.stringify(matrice_jeu)
+            },
+            success : async function(response) {
+                if (response.win){
+                    message.innerHTML = 'Vous avez gagné!'
+                    board.setAttribute('style', 'visibility: hidden')
+                    topBoard.setAttribute('style', 'visibility: hidden')
+                }
+            }
+        })
+    }
+    await
     tour()
     console.log("button clicked");
 }
