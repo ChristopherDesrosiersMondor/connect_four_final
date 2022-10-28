@@ -299,29 +299,31 @@ class Board:
         if count_same_value >= 4:
             count = inf
             return count
-            
+
         espace = 1
         list = [d1, d2]
+        to_evaluate = [node]
         for d in list :
             current_node = node
             node_directions = current_node.directions()
-            #N N 
-            to_evaluate = []
+            #N N
             for i in range(3):
                 if node_directions[d] is not None and (node_directions[d].valeur == '' or node_directions[d].valeur == current_node.valeur):
-                    to_evaluate.append(current_node)
+                    to_evaluate.append(node_directions[d])
                     current_node = node_directions[d]
                     espace += 1
-            if espace < 4:
-                continue
-            for node in to_evaluate:
+            for num, node in enumerate(to_evaluate):
                 if node.valeur == valeur:
                     count += 10
-                elif node.valeur == '':
+                if node.valeur == '':
                     count += 1
+                if num+1 < len(to_evaluate) and node.valeur == to_evaluate[num+1]:
+                    count += 50
+                if num+2 < len(to_evaluate) and node.valeur == to_evaluate[num+2]:
+                    count += 80
 
-        # if espace < 4:
-        #     count = 0
+            if espace < 4:
+                count = 0
         
         return count
 
