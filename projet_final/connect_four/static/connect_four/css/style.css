@@ -114,16 +114,13 @@ body {
     margin-top: 40%;
     height: 100px;
     margin-left: 20px;
+    width: 350px;
 }
 
 a {
     text-decoration: none;
 }
 
-#left-container{
-    flex: 1;
-    flex-direction: column;
-}
 
 .reglement {
     background-color: #006b8d;
@@ -180,10 +177,12 @@ td {
 .flex-box-jeu {
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+    gap: 100px;
 }
 
-#right-container {
-    flex: 1;
+#btn-jeu-container {
+    display: flex;
+    flex-direction: column;
 }
-

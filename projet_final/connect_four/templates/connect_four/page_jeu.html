@@ -10,13 +10,15 @@
     <body>
         <div class="flex-box-jeu">
             <div id="left-container">
-                <div id="boutonDiv">
-                    <input class="neon_btn" id="boutonInit" type="submit" value="Initialiser le jeu">
+                <div id="btn-jeu-container">
+                    <div id="boutonDiv">
+                        <input class="neon_btn" id="boutonInit" type="submit" value="Initialiser le jeu">
+                    </div>
+                    <div id="boutonDiv">
+                        <a class="neon_btn" href="{% url 'reglement' %}" id="boutonRegles">Règlements & Stratégies</a>
+                    </div>
+                    <div class="message">> bienvenue au jeu</div>
                 </div>
-                <div id="boutonDiv">
-                    <a class="neon_btn" href="{% url 'reglement' %}" id="boutonRegles">Règlements & Stratégies</a>
-                </div>
-                <div class="message">> bienvenue au jeu</div>
             </div>
             <div id="right-container">
                 <table id="topBoard"></table>
