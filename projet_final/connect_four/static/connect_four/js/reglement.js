@@ -43,11 +43,22 @@ function afficher_reglements() {
 function afficher_strategies() {
     paragraphe.innerHTML = ''
     for (let i = 0; i < titres_strategies.length; i++){
-        let titre = document.createElement('h3')
-        titre.innerText = titres_strategies[i]
-        let text = document.createElement('p')
-        text.innerText = dict_strategies[titres_strategies[i]]
-        paragraphe.append(titre, text)
+        if (i === titres_strategies.length - 1){
+            let titre = document.createElement('h3')
+            titre.innerText = titres_strategies[i]
+            let text = document.createElement('a')
+            text.href = dict_strategies[titres_strategies[i]]
+            text.innerText = "Plus de stratégies"
+            paragraphe.append(titre, text)
+        }
+        else {
+            let titre = document.createElement('h3')
+            titre.innerText = titres_strategies[i]
+            let text = document.createElement('p')
+            text.innerText = dict_strategies[titres_strategies[i]]
+            paragraphe.append(titre, text)
+        }
+
     }
     btn_rules.style.visibility = 'visible'
     btn_strat.style.visibility = 'hidden'

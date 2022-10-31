@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
 
-
 /* 
 Source: https://stackoverflow.com/questions/2662039/keep-background-image-fixed-during-scroll-using-css
 Utilisation: fixing le fait que le background repeat quand on scroll
@@ -17,6 +16,8 @@ body {
     background-position: center;
     background-size: cover;
 }
+
+
 
 .board {
     background: none;
@@ -120,7 +121,7 @@ a {
 }
 
 #left-container{
-    display: flex;
+    flex: 1;
     flex-direction: column;
 }
 
@@ -183,5 +184,6 @@ td {
 }
 
 #right-container {
-    margin-left: 5%;
+    flex: 1;
 }
+
