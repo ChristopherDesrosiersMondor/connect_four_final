@@ -56,7 +56,7 @@ function topJetons(couleur) {
         tr.append(td);
     }
     if (couleur === 'yellow') {
-        message.innerHTML = "c'est ton tour!"
+        message.innerHTML = "> c'est ton tour!"
         let boutons = document.querySelectorAll(".topBouton")
 
         for (let i = 0; i < boutons.length; i++) {
@@ -64,7 +64,7 @@ function topJetons(couleur) {
         }
     }
     else {
-        message.innerHTML = "c'est le tour de <br/> l'ordinateur"
+        message.innerHTML = "> c'est le tour de <br/> > l'ordinateur"
     }
 }
 
@@ -90,7 +90,7 @@ async function tour() {
                 let colonne = response.col
                 await jouer(colonne - 1, couleur)
                 if (response.win){
-                    message.innerHTML = "L'ai a gagné!"
+                    message.innerHTML = "> l'ordinateur a gagné!"
                     board.setAttribute('style', 'visibility: hidden')
                     topBoard.setAttribute('style', 'visibility: hidden')
                 }
@@ -120,7 +120,13 @@ async function jouer(colonne, couleur) {
             }
         }
     }
-    edit_matrice()
+    let full = edit_matrice()
+
+    if (full) {
+        message.innerHTML = "> la partie est nulle"
+        board.setAttribute('style', 'visibility: hidden')
+        topBoard.setAttribute('style', 'visibility: hidden')
+    }
 
     if (couleur === couleur2) {
         $.ajax({
@@ -130,7 +136,7 @@ async function jouer(colonne, couleur) {
             },
             success : async function(response) {
                 if (response.win){
-                    message.innerHTML = 'Vous avez gagné!'
+                    message.innerHTML = '> vous avez gagné!'
                     board.setAttribute('style', 'visibility: hidden')
                     topBoard.setAttribute('style', 'visibility: hidden')
                 }
@@ -147,6 +153,7 @@ async function jouer(colonne, couleur) {
 function edit_matrice() {
     let board = document.querySelector("#board");
     let rangees = board.querySelectorAll("tr");
+    let caseVide = 0;
     for (let i = 0; i < rangees.length; i++) {
         let colonnes = rangees[i].querySelectorAll('td')
         for (let j = 0; j < colonnes.length; j++) {
@@ -159,10 +166,14 @@ function edit_matrice() {
             }
             else {
                 matrice_jeu[i][j] = ''
+                caseVide += 1;
             }
         }
     }
-    console.log(matrice_jeu)
+    if (caseVide === 0) {
+        return true;
+    }
+
 }
 
 
