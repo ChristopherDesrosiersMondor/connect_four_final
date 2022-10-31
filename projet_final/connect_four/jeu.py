@@ -1,27 +1,3 @@
-"""
-CURRENT BUGS
-
-Le check for win dans le jeu ne sors pas si R gagne vertical
-    [X] C'etais parce qu'on sortait pas du for loop sur les rangees dans check for win donc si le win venait pas de la
-        derniere rangee ca callait pas
-
-Le ai joue toujours dans la col1 si la hauteur de prediction est a 1 et agit weird a 2. a 3 tout va bien
-
-Le ai ne bloque pas deux tours d'avance
-    [X] Mettre le h a 5
-    [X] Changer l'algorithme pour calculer le max en recursion des leaves
-        [X] implementer la surcharge de < et > dans TNODE sur la valeur du board (data[1])
-
-Le ai prend trop de temps a 5 de H
-    [ ] Changer le deepcopy pour une fonction qui enleve le dernier coup jouer.
-
-L'heuristique ne donnes pas de poid aux jetons en ligne genre 2 colles ou 3 colles
-    [X] modifier l'heuristique pour en tenir compte.
-
-"""
-
-
-import copy
 from random import randint
 from math import inf
 
