@@ -3,7 +3,7 @@ from math import inf
 
 
 class Node:
-    """Definit un node utiliser avec la theorie des graphe pour garder le board state du jeu"""
+    """Definit un node utilisé avec la theorie des graphes pour garder le board state du jeu"""
     def __init__(self) -> None:
         self.valeur = ""
         self.up = None
@@ -37,7 +37,7 @@ class Node:
 class TNode:
     tree_rep = ""
     id = 0
-    """Definit un node dans le sens de la structure d'arbre"""
+    """Definit un node dans l'arborescence"""
     def __init__(self, parent: 'TNode', data: object) -> None:
         self.parent = parent
         self.data = data
@@ -48,7 +48,6 @@ class TNode:
         TNode.id += 1
         self.id = TNode.id
 
-    """Weird comportement quand on arrive a evaluer un coup avant la victoire adverse le self devient un objet adversaire dans la fonction path_Value..."""
     def path_value(self, h: int) -> int:
         """Calculer la valeur d'un chemin de la feuille a la racine"""
         node = self
@@ -150,6 +149,7 @@ class Board:
                 node.valeur = ''
 
     def node_voisinage(self) -> None:
+        """Réseau voisinage pour chaque node"""
         """
         Source: https://stackoverflow.com/questions/7872838/one-line-if-condition-assignment
         User Frost
@@ -159,19 +159,19 @@ class Board:
         for R, rangee in enumerate(self.matrice_jeu):
             for C, node in enumerate(rangee):
 
-                # Si la rangee depasse le nombre de rangees c'est que ya rien 
+                # Si la rangee depasse le nombre de rangees --> fin du tableau
                 r_in_range = R + 1 <= self.rangees - 1
 
-                # Si la colonne depasse le nombre de colonnes c'est que y'a rien
+                # Si la colonne depasse le nombre de colonnes --> fin du tableau
                 c_in_range = C + 1 <= self.colonnes - 1
 
-                # Si Rangee est negatif y'a rien
+                # Si Rangee est negatif --> fin du tableau
                 r_positive = R - 1 >= 0
 
-                # Si Colonne est negatif y'a rien
+                # Si Colonne est negatif --> fin du tableau
                 c_positive = C - 1 >= 0
 
-                # Et ca fonctionne parce qu'on regarde just la ou les conditions qui pourraient briser l'assignement
+                # on définit la position de chacun de ses voisins pour chaque node
                 node.up = matrice_jeu[R-1][C] if r_positive else None
                 node.down = matrice_jeu[R+1][C] if r_in_range else None
                 node.right = matrice_jeu[R][C+1] if c_in_range else None
@@ -183,6 +183,7 @@ class Board:
 
 
     def first_empty_node(self, colonne: int) -> Node:
+        """Trouve la première case vide dans une colonne"""
         current_rangee = self.rangees - 1
         colonne_index = colonne - 1
         current_node = self.matrice_jeu[current_rangee][colonne_index]
@@ -197,6 +198,7 @@ class Board:
         if empty:
             return current_node
         
+        # si la colonne est pleine
         return None
 
 
@@ -205,8 +207,6 @@ class Board:
             node.valeur = f"{jeton}"
 
 
-    # Retourner un tuple (win: bool, winner: str)
-    # winner = "" si win != True
     def check_for_win(self) -> tuple:
         win = False
         winner = ""
@@ -242,6 +242,7 @@ class Board:
 
     @staticmethod
     def while_equal_value(node: Node, direction: str, count: int) -> tuple:
+        """Calcule la quantité de node de même valeur dans une direction"""
         current_node = node
         node_directions = node.directions()
         while current_node.valeur == node.valeur:
@@ -261,17 +262,16 @@ class Board:
             
             count = Board.while_equal_value(node, d1, count)
             count = Board.while_equal_value(node, d2, count)
-        
-        # if count >= 4:
-        #     count = inf 
 
         return count
     
     @staticmethod
     def check_direction_possible_win(node: Node, d1: str, d2: str):
+        """Évalue la valeur d'un axe et ses possibilités de gagner"""
         count = 2
         valeur = node.valeur
         count_same_value = Board.check_direction(node, d1, d2)
+        # coup gagnant
         if count_same_value >= 4:
             count = inf
             return count
