@@ -282,7 +282,7 @@ class Board:
         for d in list :
             current_node = node
             node_directions = current_node.directions()
-            #N N
+   
             for i in range(3):
                 if node_directions[d] is not None and (node_directions[d].valeur == '' or node_directions[d].valeur == valeur):
                     to_evaluate.append(node_directions[d])
@@ -298,6 +298,7 @@ class Board:
                 if count_same_value == 3:
                     count *= 3
 
+            # impossibilité de faire un coup gagnant
             if espace < 4:
                 count = 0
         
@@ -314,17 +315,9 @@ class Joueureuse:
         board.updater_board(self.jeton, node_to_modify)
 
 
-#Travailler sur une copie du board
 class Ai_C4(Joueureuse):
     HAUTEUR  = 5
-    # losing_nodes = {
-    #     0: {},
-    #     1: {},
-    #     2: {},
-    #     3: {},
-    #     4: {},
-    #     5: {}
-    # }
+
     """Definit un ai pouvant jouer contre une personne automatiquement"""
     def __init__(self, jeton_color: str, jeton_ennemi: str) -> None:
         super().__init__(jeton_color)
@@ -378,8 +371,7 @@ class Ai_C4(Joueureuse):
                 this_board.updater_board(jeton, node_jouer)
                 board_value = self.board_value(this_board)
                 data.append((this_board.board_to_matrice(), board_value, col))
-                # if board_value == inf or board_value == -inf:
-                #     return data
+
         return data
 
 
@@ -421,13 +413,6 @@ class Ai_C4(Joueureuse):
 
     @staticmethod
     def valeur(node: TNode, adversaire: bool = False):
-        # for n in node.enfants:
-        #     h, col = Ai_C4.hauteur(n)
-        #     if col in Ai_C4.losing_nodes[h]:
-        #         Ai_C4.losing_nodes[h][col].append(n)
-        #     else:
-        #         Ai_C4.losing_nodes[h][col] = []
-        #         Ai_C4.losing_nodes[h][col].append(n)
         if not node.enfants:
             return node
         elif adversaire:
