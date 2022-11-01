@@ -269,7 +269,7 @@ class Board:
            dans une serie de 4 si ya 2 de la meme valeur - points * 2
            dans une serie de 4 si ya 3 de la meme valeur - points * 3
         """
-        count = 2
+        count = 0
         valeur = node.valeur
         count_same_value = Board.check_direction(node, d1, d2)
         # coup gagnant
@@ -277,31 +277,31 @@ class Board:
             count = inf
             return count
 
-        espace = 1
-        list = [d1, d2]
-        to_evaluate = [node]
-        for d in list :
+        liste_d = [d1, d2]
+        for d in liste_d :
             current_node = node
-            node_directions = current_node.directions()
-   
+            to_evaluate = [current_node]
             for i in range(3):
-                if node_directions[d] is not None and (node_directions[d].valeur == '' or node_directions[d].valeur == valeur):
-                    to_evaluate.append(node_directions[d])
-                    current_node = node_directions[d]
-                    espace += 1
-            for node in to_evaluate:
-                if node.valeur == valeur:
-                    count += 10
-                if node.valeur == '':
-                    count += 1
-                if count_same_value == 2:
-                    count *= 2
-                if count_same_value == 3:
-                    count *= 3
+                if current_node.directions()[d] is not None:
+                    to_evaluate.append(current_node.directions()[d])
+                    # Source possible d'erreur: parent None
+                    current_node = current_node.directions()[d]
 
-            # impossibilité de faire un coup gagnant
-            if espace < 4:
-                count = 0
+            if len(to_evaluate) == 4:
+                representation = str(to_evaluate)
+                all_the_same = True
+                if 'R' in representation and 'N' in representation:
+                    all_the_same = False
+                
+                nbr_jetons = list(representation).count(valeur)
+
+                if all_the_same:
+                    try:
+                        representation.replace('N', 'R')
+                        scale = Ai_C4.scale[representation]
+                        count += scale
+                    except:
+                        pass
         
         return count
 
@@ -318,6 +318,15 @@ class Joueureuse:
 
 class Ai_C4(Joueureuse):
     HAUTEUR  = 5
+    scale = {
+        "[R, ,R,R]": 5000,
+        "[R,R, ,R]": 5000,
+        "[R,R,R, ]": 1000,
+        "[R, ,R, ]": 30,
+        "[R, , ,R]": 30,
+        "[R,R, , ]": 10,
+        "[R, , , ]": 1
+    }
 
     """Definit un ai pouvant jouer contre une personne automatiquement"""
     def __init__(self, jeton_color: str, jeton_ennemi: str) -> None:
@@ -350,10 +359,11 @@ class Ai_C4(Joueureuse):
         valeur = 0
         for row in board.matrice_jeu:
             for node in row:
-                if node.valeur == self.jeton:
-                    valeur += self.node_value(node)
-                elif node.valeur == self.jeton_ennemi:
-                    valeur -= self.node_value(node)
+                if node.valeur != "":
+                    if node.valeur == self.jeton:
+                        valeur += self.node_value(node)
+                    elif node.valeur == self.jeton_ennemi:
+                        valeur -= self.node_value(node)
         return valeur
 
 
