@@ -16,6 +16,17 @@ class Node:
         self.down_left = None
     
     def directions(self):
+        """Retourne un dictionnaire avec ses voisins selon les directions suivantes:
+        
+           up
+           down
+           left
+           right
+           up_right
+           up_left
+           down_right
+           down_left
+        """
         return {
             "up": self.up,
             "down" : self.down,
@@ -37,7 +48,7 @@ class Node:
 class TNode:
     tree_rep = ""
     id = 0
-    """Definit un node dans l'arborescence"""
+    """Definit un node d'un arbre l'arborescence"""
     def __init__(self, parent: 'TNode', data: object) -> None:
         self.parent = parent
         self.data = data
@@ -57,34 +68,14 @@ class TNode:
             node = self.parent
         return value
 
-    def childs_value(self) -> int:
-        value = 0
-        for enfant in self.enfants:
-            value += enfant.data[1]
-        return value
-
-                #https://stackoverflow.com/questions/1649027/how-do-i-print-out-a-tree-structure
-
     @staticmethod
     def last(node: 'TNode') -> bool:
+        """Methode pour verifier qu'un node est une leaves ou non"""
         if not node.enfants:
             return True
         return False
 
-    @staticmethod
-    def print_pretty(node: 'TNode', indent: str = "", last: bool = False) -> None:
-        to_print = ""
-        if TNode.last(node):
-            to_print += "|-----  "
-        else:
-            to_print += "\\-"
-            indent += "|  "
-
-        TNode.tree_rep += f"{indent}{to_print} V: {node.value} C:{node.colonne} \n"
-        
-        for enfant in node.enfants:
-            TNode.print_pretty(enfant, indent, last)
-
+    """On fait la surcharge de get et lt pour pouvoir appeler max sur une liste de node"""
     def __gt__(self, otherTNode: 'TNode') -> bool:
         if self.data[1] < otherTNode.data[1]:
             return False
@@ -130,11 +121,13 @@ class Board:
         return mat_string
 
     def fill(self, matrice: list):
+        """Remplir les nodes du board avec les valeurs d'une matrice"""
         for i in range(len(matrice)):
             for j in range(len(matrice[0])):
                 self.matrice_jeu[i][j].valeur = matrice[i][j]
 
     def board_to_matrice(self) -> list:
+        """Utiliser le board pour generer une matrice de valeur qui le represente"""
         matrice = []
         for rangee in self.matrice_jeu:
             list_rangee = []
@@ -149,7 +142,7 @@ class Board:
                 node.valeur = ''
 
     def node_voisinage(self) -> None:
-        """Réseau voisinage pour chaque node"""
+        """Réseau voisinage: s'assurer que toutes les nodes connaissent leurs voisins"""
         """
         Source: https://stackoverflow.com/questions/7872838/one-line-if-condition-assignment
         User Frost
@@ -208,6 +201,7 @@ class Board:
 
 
     def check_for_win(self) -> tuple:
+        """Regarde si 4 node ou plus de suite ont la meme valeur et retourne un bool et cette valeur"""
         win = False
         winner = ""
         for rangee in self.matrice_jeu:
@@ -267,7 +261,14 @@ class Board:
     
     @staticmethod
     def check_direction_possible_win(node: Node, d1: str, d2: str):
-        """Évalue la valeur d'un axe et ses possibilités de gagner"""
+        """Évalue la valeur d'un axe et ses possibilités de gagner
+        
+           Baser sur la theorie de l'heuristique on donne des poids a certaines situations:
+           espace vide - 1 point
+           si un node est = a la valeur jouer - 10 points
+           dans une serie de 4 si ya 2 de la meme valeur - points * 2
+           dans une serie de 4 si ya 3 de la meme valeur - points * 3
+        """
         count = 2
         valeur = node.valeur
         count_same_value = Board.check_direction(node, d1, d2)
@@ -343,12 +344,7 @@ class Ai_C4(Joueureuse):
         score_frontslash = Board.check_direction_possible_win(node, "down_left", "up_right")
 
         return score_vertical + score_horizontal + score_frontslash + score_backslash
-        
-    def jouer_colonne(self, jeton: str, board: Board, colonne: int) -> Board:
-        node_jouer = board.first_empty_node(colonne)
-        if node_jouer:
-            board.updater_board(jeton, node_jouer)
-        return board
+
 
     def board_value(self, board: Board) -> int:
         valeur = 0
@@ -376,7 +372,7 @@ class Ai_C4(Joueureuse):
 
 
     def moves(self, node: TNode, h: int) -> None:
-        """h doit etre impair"""
+        """methode de resursion pour trouver tous les moves possibles sur plusieurs tours: h doit etre impair"""
         if h <= 0:
             return
 
@@ -391,19 +387,9 @@ class Ai_C4(Joueureuse):
         for enfant in node.enfants:
             self.moves(enfant, h-1)
 
-    def valeur_enfants(self, node: TNode, valeur: int) -> int:
-        if node.enfants == []:
-            for node in node.enfants:
-                valeur += node.data[1]
-            return valeur
-
-        for node in node.enfants:
-            valeur += node.data[1]
-        
-        return self.valeur_enfants(node, valeur)
-
     @staticmethod
     def hauteur(node, colonne = "", h = 0):
+        """Methode pour renvoyer ou on est rendu dans la recursion"""
         if not node.parent:
             return h, colonne
         colonne_parent = node.parent.data[2]
@@ -412,7 +398,8 @@ class Ai_C4(Joueureuse):
         return Ai_C4.hauteur(node.parent, str(colonne_parent)+str(colonne), h+1)
 
     @staticmethod
-    def valeur(node: TNode, adversaire: bool = False):
+    def valeur(node: TNode, adversaire: bool = False) -> Node:
+        """Methode pour connaitre le meilleur boardstate possible dans le futur selon la valeur max de chaque prochain coups, renvoie la feuille de la branche correspondante"""
         if not node.enfants:
             return node
         elif adversaire:
@@ -426,6 +413,7 @@ class Ai_C4(Joueureuse):
             return valeur
 
     def best_path(self, node: TNode) -> TNode:
+        """Traverse l'arbre a l'envers pour trouver le bon prochain coup a partir de la meilleur feuille"""
         best_leave = Ai_C4.valeur(node)
         path = best_leave
         while path.parent.parent is not None:
@@ -482,5 +470,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
