@@ -271,11 +271,6 @@ class Board:
         """
         count = 0
         valeur = node.valeur
-        count_same_value = Board.check_direction(node, d1, d2)
-        # coup gagnant
-        if count_same_value >= 4:
-            count = inf
-            return count
 
         liste_d = [d1, d2]
         for d in liste_d :
@@ -297,7 +292,7 @@ class Board:
 
                 if all_the_same:
                     try:
-                        representation.replace('N', 'R')
+                        representation = representation.replace('N', 'R')
                         scale = Ai_C4.scale[representation]
                         count += scale
                     except:
@@ -319,9 +314,10 @@ class Joueureuse:
 class Ai_C4(Joueureuse):
     HAUTEUR  = 5
     scale = {
-        "[R, ,R,R]": 5000,
-        "[R,R, ,R]": 5000,
-        "[R,R,R, ]": 1000,
+        "[R,R,R,R]": inf,
+        "[R, ,R,R]": 200,
+        "[R,R, ,R]": 200,
+        "[R,R,R, ]": 500,
         "[R, ,R, ]": 30,
         "[R, , ,R]": 30,
         "[R,R, , ]": 10,
