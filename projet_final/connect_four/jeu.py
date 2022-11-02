@@ -313,6 +313,7 @@ class Joueureuse:
 
 class Ai_C4(Joueureuse):
     HAUTEUR  = 5
+    # il choisi vraiment un mauvais futur voir ligne 428 debug
     scale = {
         "[R,R,R,R]": inf,
         "[R, ,R,R]": 200,
