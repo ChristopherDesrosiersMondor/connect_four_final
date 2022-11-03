@@ -313,7 +313,7 @@ class Board:
             if len(to_evaluate) == 4:
                 # nbr_jetons = list(representation).count(valeur)
 
-                to_evaluate = to_evaluate.replace('N', 'R')
+                to_evaluate = to_evaluate.replace('Y', 'R')
                 scale = Ai_C4.scale[to_evaluate]
                 count += scale
         
@@ -515,7 +515,7 @@ def ai_game(board: Board, player1: Joueureuse, ai: Ai_C4) -> None:
 
 def main():
     board = Board(6, 7)
-    valerie = Joueureuse("N")
+    valerie = Joueureuse("Y")
     ai = Ai_C4("R", valerie.jeton)
 
     ai_game(board, valerie, ai)
