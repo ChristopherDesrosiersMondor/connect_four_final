@@ -334,7 +334,7 @@ class Joueureuse:
 class Ai_C4(Joueureuse):
     HAUTEUR  = 5
     scale = {
-        "RRRR": 25000,
+        "RRRR": inf,
         "R RR": 200,
         "RR R": 200,
         "RRR ": 500,
@@ -395,6 +395,8 @@ class Ai_C4(Joueureuse):
                 this_board.updater_board(jeton, node_jouer)
                 board_value = self.board_value(this_board)
                 data.append((this_board.board_to_matrice(), board_value, col))
+                if board_value == inf or board_value == -inf:
+                    return data
             # self.temp_board.unfill()
 
         return data
@@ -436,10 +438,15 @@ class Ai_C4(Joueureuse):
         if not node.enfants:
             return node
         elif adversaire:
+            # for enfant in node.enfants:
+            #     if enfant.parent.value == inf:
+            #         enfant.value = inf
             return Ai_C4.valeur(min(node.enfants), not adversaire)
         else:
             nodes = []
             for enfant in node.enfants:
+                # if enfant.parent.value == -inf:
+                #     enfant.value = -inf
                 nodes.append(Ai_C4.valeur(enfant, not adversaire))
             valeur = max(nodes)
             return valeur
