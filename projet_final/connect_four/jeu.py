@@ -372,7 +372,7 @@ class Ai_C4(Joueureuse):
 
 
     def board_value(self, board: Board) -> int:
-        """Complexite: min 1 -- max n"""
+        """Complexite: min n -- max n^2"""
         valeur = 0
         for node in board.nodes_to_value.values():
             if node.valeur == self.jeton:
