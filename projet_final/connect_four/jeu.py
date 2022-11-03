@@ -98,6 +98,7 @@ class TNode:
 class Board:
     """Definit un board de puissance 4"""
     def __init__(self, lignes: int, colonnes: int) -> None:
+        """Complexite: n^2"""
         self.rangees = lignes
         self.colonnes = colonnes
         self.nodes_to_value = []
@@ -131,16 +132,17 @@ class Board:
 
     # optimisation possible: non-identifiee
     def board_to_matrice(self) -> list:
-        """Utiliser le board pour generer une matrice de valeur qui le represente"""
-        matrice = []
-        for rangee in self.matrice_jeu:
-            list_rangee = []
-            for node in rangee:
-                list_rangee.append(node.valeur)
-            matrice.append(list_rangee)
+        """Utiliser le board pour generer une matrice de valeur qui le represente
+           Complexite: n^2
+        """
+        matrice = [['' for colonne in range(self.colonnes)] for rangee in range(self.rangees)]
+        for i, rangee in enumerate(self.matrice_jeu):
+            for j, node in enumerate(rangee):
+                matrice[i][j] = node.valeur
         return matrice
     
     def unfill(self) -> None:
+        """Complexite: n^2"""
         for rangee in self.matrice_jeu:
             for node in rangee:
                 node.valeur = ''
@@ -279,7 +281,7 @@ class Board:
     @staticmethod
     def check_direction_possible_win(node: Node, d1: str, d2: str):
         """Évalue la valeur d'un axe et ses possibilités de gagner
-        
+           Complexite: min 1 -- max n
            Baser sur la theorie de l'heuristique on donne des poids a certaines situations:
            "RRRR": inf,
            "R RR": 200,
@@ -320,13 +322,13 @@ class Joueureuse:
         self.jeton = jeton_color
 
     def jouer(self, board: Board, colonne: int) -> None:
+        """Complexite: n"""
         node_to_modify = board.first_empty_node(colonne)
         board.updater_board(self.jeton, node_to_modify)
 
 
 class Ai_C4(Joueureuse):
     HAUTEUR  = 5
-    # il choisi vraiment un mauvais futur voir ligne 428 debug
     scale = {
         "RRRR": inf,
         "R RR": 200,
@@ -340,6 +342,7 @@ class Ai_C4(Joueureuse):
 
     """Definit un ai pouvant jouer contre une personne automatiquement"""
     def __init__(self, jeton_color: str, jeton_ennemi: str) -> None:
+        """Complexite: n^2"""
         super().__init__(jeton_color)
         self.jeton_ennemi = jeton_ennemi
         self.root = None
