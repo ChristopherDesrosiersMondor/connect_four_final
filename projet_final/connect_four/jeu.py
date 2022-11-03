@@ -334,10 +334,10 @@ class Joueureuse:
 class Ai_C4(Joueureuse):
     HAUTEUR  = 5
     scale = {
-        "RRRR": inf,
+        "RRRR": 25000,
         "R RR": 200,
         "RR R": 200,
-        "RRR ": 250,
+        "RRR ": 500,
         "R R ": 30,
         "R  R": 30,
         "RR  ": 10,
