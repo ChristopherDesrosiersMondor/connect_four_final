@@ -100,6 +100,7 @@ class Board:
     def __init__(self, lignes: int, colonnes: int) -> None:
         self.rangees = lignes
         self.colonnes = colonnes
+        self.nodes_to_value = []
         self.matrice_jeu = [[Node() for colonne in range(colonnes)] for rangee in range(lignes)]
         self.node_voisinage()
     
@@ -125,7 +126,10 @@ class Board:
         for i in range(len(matrice)):
             for j in range(len(matrice[0])):
                 self.matrice_jeu[i][j].valeur = matrice[i][j]
+                if self.matrice_jeu[i][j].valeur != '':
+                    self.nodes_to_value.append(self.matrice_jeu[i][j])
 
+    # optimisation possible: non-identifiee
     def board_to_matrice(self) -> list:
         """Utiliser le board pour generer une matrice de valeur qui le represente"""
         matrice = []
@@ -140,9 +144,13 @@ class Board:
         for rangee in self.matrice_jeu:
             for node in rangee:
                 node.valeur = ''
+        self.nodes_to_value = []
+
 
     def node_voisinage(self) -> None:
-        """Réseau voisinage: s'assurer que toutes les nodes connaissent leurs voisins"""
+        """Réseau voisinage: s'assurer que toutes les nodes connaissent leurs voisins
+           complexite n^2
+        """
         """
         Source: https://stackoverflow.com/questions/7872838/one-line-if-condition-assignment
         User Frost
@@ -176,7 +184,9 @@ class Board:
 
 
     def first_empty_node(self, colonne: int) -> Node:
-        """Trouve la première case vide dans une colonne"""
+        """Trouve la première case vide dans une colonne
+           Complexite: n
+        """
         current_rangee = self.rangees - 1
         colonne_index = colonne - 1
         current_node = self.matrice_jeu[current_rangee][colonne_index]
@@ -196,12 +206,16 @@ class Board:
 
 
     def updater_board(self, jeton: str, node: Node) -> None:
+        """Complexite: min 1 -- max n"""
         if node and node.valeur == "":
             node.valeur = f"{jeton}"
+            self.nodes_to_value.append(node)
 
 
     def check_for_win(self) -> tuple:
-        """Regarde si 4 node ou plus de suite ont la meme valeur et retourne un bool et cette valeur"""
+        """Regarde si 4 node ou plus de suite ont la meme valeur et retourne un bool et cette valeur
+           Complexite: n^3
+        """
         win = False
         winner = ""
         for rangee in self.matrice_jeu:
@@ -236,7 +250,9 @@ class Board:
 
     @staticmethod
     def while_equal_value(node: Node, direction: str, count: int) -> tuple:
-        """Calcule la quantité de node de même valeur dans une direction"""
+        """Calcule la quantité de node de même valeur dans une direction
+           Complexite: n
+        """
         current_node = node
         node_directions = node.directions()
         while current_node.valeur == node.valeur:
@@ -250,6 +266,7 @@ class Board:
 
     @staticmethod
     def check_direction(node: Node, d1: str, d2: str):
+        """Complexite: n"""
         count = 0
         if node.valeur != '':
             count = 1
@@ -264,10 +281,14 @@ class Board:
         """Évalue la valeur d'un axe et ses possibilités de gagner
         
            Baser sur la theorie de l'heuristique on donne des poids a certaines situations:
-           espace vide - 1 point
-           si un node est = a la valeur jouer - 10 points
-           dans une serie de 4 si ya 2 de la meme valeur - points * 2
-           dans une serie de 4 si ya 3 de la meme valeur - points * 3
+           "RRRR": inf,
+           "R RR": 200,
+           "RR R": 200,
+           "RRR ": 500,
+           "R R ": 30,
+           "R  R": 30,
+           "RR  ": 10,
+           "R   ": 1
         """
         count = 0
         valeur = node.valeur
@@ -275,28 +296,20 @@ class Board:
         liste_d = [d1, d2]
         for d in liste_d :
             current_node = node
-            to_evaluate = [current_node]
+            to_evaluate = current_node.valeur
             for i in range(3):
-                if current_node.directions()[d] is not None:
-                    to_evaluate.append(current_node.directions()[d])
+                if current_node.directions()[d] is not None and (current_node.directions()[d].valeur == '' or current_node.directions()[d].valeur == valeur):
+                    letter = current_node.directions()[d].valeur
+                    to_evaluate += letter if letter != '' else " "
                     # Source possible d'erreur: parent None
                     current_node = current_node.directions()[d]
 
             if len(to_evaluate) == 4:
-                representation = str(to_evaluate)
-                all_the_same = True
-                if 'R' in representation and 'N' in representation:
-                    all_the_same = False
-                
-                nbr_jetons = list(representation).count(valeur)
+                # nbr_jetons = list(representation).count(valeur)
 
-                if all_the_same:
-                    try:
-                        representation = representation.replace('N', 'R')
-                        scale = Ai_C4.scale[representation]
-                        count += scale
-                    except:
-                        pass
+                to_evaluate = to_evaluate.replace('N', 'R')
+                scale = Ai_C4.scale[to_evaluate]
+                count += scale
         
         return count
 
@@ -315,24 +328,21 @@ class Ai_C4(Joueureuse):
     HAUTEUR  = 5
     # il choisi vraiment un mauvais futur voir ligne 428 debug
     scale = {
-        "[R,R,R,R]": inf,
-        "[R, ,R,R]": 200,
-        "[R,R, ,R]": 200,
-        "[R,R,R, ]": 500,
-        "[R, ,R, ]": 30,
-        "[R, , ,R]": 30,
-        "[R,R, , ]": 10,
-        "[R, , , ]": 1
+        "RRRR": inf,
+        "R RR": 200,
+        "RR R": 200,
+        "RRR ": 500,
+        "R R ": 30,
+        "R  R": 30,
+        "RR  ": 10,
+        "R   ": 1
     }
 
     """Definit un ai pouvant jouer contre une personne automatiquement"""
     def __init__(self, jeton_color: str, jeton_ennemi: str) -> None:
         super().__init__(jeton_color)
         self.jeton_ennemi = jeton_ennemi
-        self.leaves = {}
         self.root = None
-        self.tree = {}
-        self.next_moves = []
         self.temp_board = Board(6, 7)
 
     
@@ -354,13 +364,11 @@ class Ai_C4(Joueureuse):
 
     def board_value(self, board: Board) -> int:
         valeur = 0
-        for row in board.matrice_jeu:
-            for node in row:
-                if node.valeur != "":
-                    if node.valeur == self.jeton:
-                        valeur += self.node_value(node)
-                    elif node.valeur == self.jeton_ennemi:
-                        valeur -= self.node_value(node)
+        for node in board.nodes_to_value:
+            if node.valeur == self.jeton:
+                valeur += self.node_value(node)
+                continue
+            valeur -= self.node_value(node)
         return valeur
 
 
@@ -374,6 +382,7 @@ class Ai_C4(Joueureuse):
                 this_board.updater_board(jeton, node_jouer)
                 board_value = self.board_value(this_board)
                 data.append((this_board.board_to_matrice(), board_value, col))
+            self.temp_board.unfill()
 
         return data
 
@@ -410,7 +419,6 @@ class Ai_C4(Joueureuse):
         if not node.enfants:
             return node
         elif adversaire:
-            
             return Ai_C4.valeur(min(node.enfants), not adversaire)
         else:
             nodes = []
