@@ -355,6 +355,13 @@ class Ai_C4(Joueureuse):
 
     
     def jouer(self, board: Board) -> int:
+        espaces_vides = 0 
+        for rangee in board.board_to_matrice():
+            espaces_vides += rangee.count('')
+        if espaces_vides <= 20:
+            Ai_C4.hauteur = 7
+        else:
+            Ai_C4.hauteur = 5
         colonne = self.next_move(board)
         node_to_modify = board.first_empty_node(colonne)
         board.updater_board(self.jeton, node_to_modify)
