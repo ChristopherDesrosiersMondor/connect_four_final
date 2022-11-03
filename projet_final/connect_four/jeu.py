@@ -123,7 +123,9 @@ class Board:
         return mat_string
 
     def fill(self, matrice: list):
-        """Remplir les nodes du board avec les valeurs d'une matrice"""
+        """Remplir les nodes du board avec les valeurs d'une matrice
+           Complexite n^2
+        """
         # for i in range(len(matrice)):
         #     for j in range(len(matrice[0])):
         #         self.matrice_jeu[i][j].valeur = matrice[i][j]
@@ -383,6 +385,7 @@ class Ai_C4(Joueureuse):
 
 
     def possible_moves(self, board_state: list, jeton: str) -> list:
+        """Complexite: n^3"""
         data = []
         for col in range(1, self.temp_board.colonnes + 1):
             self.temp_board.fill(board_state)
@@ -398,7 +401,9 @@ class Ai_C4(Joueureuse):
 
 
     def moves(self, node: TNode, h: int) -> None:
-        """methode de resursion pour trouver tous les moves possibles sur plusieurs tours: h doit etre impair"""
+        """methode de resursion pour trouver tous les moves possibles sur plusieurs tours: h doit etre impair
+           Complexite: n^k
+        """
         if h <= 0:
             return
 
@@ -425,7 +430,9 @@ class Ai_C4(Joueureuse):
 
     @staticmethod
     def valeur(node: TNode, adversaire: bool = False) -> Node:
-        """Methode pour connaitre le meilleur boardstate possible dans le futur selon la valeur max de chaque prochain coups, renvoie la feuille de la branche correspondante"""
+        """Methode pour connaitre le meilleur boardstate possible dans le futur selon la valeur max de chaque prochain coups, renvoie la feuille de la branche correspondante
+           Complexite n^k
+        """
         if not node.enfants:
             return node
         elif adversaire:
@@ -438,7 +445,9 @@ class Ai_C4(Joueureuse):
             return valeur
 
     def best_path(self, node: TNode) -> TNode:
-        """Traverse l'arbre a l'envers pour trouver le bon prochain coup a partir de la meilleur feuille"""
+        """Traverse l'arbre a l'envers pour trouver le bon prochain coup a partir de la meilleur feuille
+           Complexite: n^k
+        """
         best_leave = Ai_C4.valeur(node)
         path = best_leave
         while path.parent.parent is not None:
@@ -446,6 +455,7 @@ class Ai_C4(Joueureuse):
         return path
 
     def next_move(self, board: Board, h: int = HAUTEUR) -> int:
+        """Complexite: n^k"""
         board_state = board.board_to_matrice()
         self.root = TNode(None, (board_state, (self.board_value(self.temp_board)), None))
         self.temp_board.unfill()
