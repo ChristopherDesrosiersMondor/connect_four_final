@@ -1,5 +1,6 @@
 from random import randint
 from math import inf
+from multiprocessing import Process
 
 
 class Node:
@@ -101,7 +102,6 @@ class Board:
         """Complexite: n^2"""
         self.rangees = lignes
         self.colonnes = colonnes
-        self.nodes_to_value = {}
         self.matrice_jeu = [[Node() for colonne in range(colonnes)] for rangee in range(lignes)]
         self.node_voisinage()
     
@@ -135,8 +135,6 @@ class Board:
         for i, rangee in enumerate(matrice):
             for j, valeur in enumerate(rangee):
                 self.matrice_jeu[i][j].valeur = valeur
-                if self.matrice_jeu[i][j].valeur != '':
-                    self.nodes_to_value[f"{i}{j}"] = self.matrice_jeu[i][j]
 
     # optimisation possible: non-identifiee
     def board_to_matrice(self) -> list:
@@ -154,7 +152,6 @@ class Board:
         for rangee in self.matrice_jeu:
             for node in rangee:
                 node.valeur = ''
-        self.nodes_to_value.clear()
 
 
     def node_voisinage(self) -> None:
@@ -340,7 +337,7 @@ class Ai_C4(Joueureuse):
         "RRRR": inf,
         "R RR": 200,
         "RR R": 200,
-        "RRR ": 500,
+        "RRR ": 250,
         "R R ": 30,
         "R  R": 30,
         "RR  ": 10,
@@ -354,6 +351,7 @@ class Ai_C4(Joueureuse):
         self.jeton_ennemi = jeton_ennemi
         self.root = None
         self.temp_board = Board(6, 7)
+        self.processes = []
 
     
     def jouer(self, board: Board) -> int:
@@ -376,11 +374,13 @@ class Ai_C4(Joueureuse):
     def board_value(self, board: Board) -> int:
         """Complexite: min n -- max n^2"""
         valeur = 0
-        for node in board.nodes_to_value.values():
-            if node.valeur == self.jeton:
-                valeur += self.node_value(node)
-                continue
-            valeur -= self.node_value(node)
+        for rangee in board.matrice_jeu:
+            for node in rangee:
+                if node.valeur != '':
+                    if node.valeur == self.jeton:
+                        valeur += self.node_value(node)
+                        continue
+                    valeur -= self.node_value(node)
         return valeur
 
 
@@ -395,7 +395,7 @@ class Ai_C4(Joueureuse):
                 this_board.updater_board(jeton, node_jouer)
                 board_value = self.board_value(this_board)
                 data.append((this_board.board_to_matrice(), board_value, col))
-            self.temp_board.unfill()
+            # self.temp_board.unfill()
 
         return data
 
@@ -460,6 +460,9 @@ class Ai_C4(Joueureuse):
         self.root = TNode(None, (board_state, (self.board_value(self.temp_board)), None))
         self.temp_board.unfill()
         self.moves(self.root, h)
+        for process in self.processes:
+            process.join()
+        self.processes.clear()
         best_path = self.best_path(self.root)
         return best_path.data[2]
 
