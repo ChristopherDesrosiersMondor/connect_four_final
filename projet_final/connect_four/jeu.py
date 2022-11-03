@@ -101,7 +101,7 @@ class Board:
         """Complexite: n^2"""
         self.rangees = lignes
         self.colonnes = colonnes
-        self.nodes_to_value = []
+        self.nodes_to_value = {}
         self.matrice_jeu = [[Node() for colonne in range(colonnes)] for rangee in range(lignes)]
         self.node_voisinage()
     
@@ -124,11 +124,17 @@ class Board:
 
     def fill(self, matrice: list):
         """Remplir les nodes du board avec les valeurs d'une matrice"""
-        for i in range(len(matrice)):
-            for j in range(len(matrice[0])):
-                self.matrice_jeu[i][j].valeur = matrice[i][j]
+        # for i in range(len(matrice)):
+        #     for j in range(len(matrice[0])):
+        #         self.matrice_jeu[i][j].valeur = matrice[i][j]
+        #         if self.matrice_jeu[i][j].valeur != '':
+        #             self.nodes_to_value.append(self.matrice_jeu[i][j])
+
+        for i, rangee in enumerate(matrice):
+            for j, valeur in enumerate(rangee):
+                self.matrice_jeu[i][j].valeur = valeur
                 if self.matrice_jeu[i][j].valeur != '':
-                    self.nodes_to_value.append(self.matrice_jeu[i][j])
+                    self.nodes_to_value[f"{i}{j}"] = self.matrice_jeu[i][j]
 
     # optimisation possible: non-identifiee
     def board_to_matrice(self) -> list:
@@ -211,7 +217,6 @@ class Board:
         """Complexite: min 1 -- max n"""
         if node and node.valeur == "":
             node.valeur = f"{jeton}"
-            self.nodes_to_value.append(node)
 
 
     def check_for_win(self) -> tuple:
@@ -357,6 +362,7 @@ class Ai_C4(Joueureuse):
 
 
     def node_value(self, node: Node) -> int:
+        """Complexite: min 1 -- max n"""
         score_vertical = Board.check_direction_possible_win(node, "up", "down")
         score_horizontal = Board.check_direction_possible_win(node, "left", "right")
         score_backslash = Board.check_direction_possible_win(node, "down_right", "up_left")
@@ -366,8 +372,9 @@ class Ai_C4(Joueureuse):
 
 
     def board_value(self, board: Board) -> int:
+        """Complexite: min 1 -- max n"""
         valeur = 0
-        for node in board.nodes_to_value:
+        for node in board.nodes_to_value.values():
             if node.valeur == self.jeton:
                 valeur += self.node_value(node)
                 continue
