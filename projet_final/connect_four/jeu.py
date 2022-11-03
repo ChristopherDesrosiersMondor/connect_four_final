@@ -146,7 +146,7 @@ class Board:
         for rangee in self.matrice_jeu:
             for node in rangee:
                 node.valeur = ''
-        self.nodes_to_value = []
+        self.nodes_to_value.clear()
 
 
     def node_voisinage(self) -> None:
