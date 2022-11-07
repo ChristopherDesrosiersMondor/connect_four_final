@@ -1,9 +1,30 @@
+import os
 from random import randint
 from math import inf
 from functools import wraps
-import shelve
 import json, atexit
+import random
 
+"""
+Source: https://www.youtube.com/watch?v=qORqpMg3Uew&list=PLsxaCifbRiGtlF1YLBOgJEBYZdoaY-9nK&index=1&ab_channel=Indently
+Source: https://stackoverflow.com/questions/16463582/memoize-to-disk-python-persistent-memoization
+Utilisation: trying to speed up our recursion functions by adding a cache.
+Comments: Would need to store the cache somewhere and reuse it between session so many case would be already known
+
+# def memoize_moves(func):
+#     cache = shelve.open('possible_moves.db')
+
+#     @wraps(func)
+#     def wrapper(*args, **kwargs):
+#         key = str(args) + str(kwargs)
+
+#         if key not in cache:
+#             cache[key] = func(*args, **kwargs)
+
+#         return cache[key]
+
+#     return wrapper
+"""
 def memoize_this(file_name):
     try:
         cache = json.load(open(file_name, 'r'))
@@ -23,45 +44,6 @@ def memoize_this(file_name):
 
     return decorator
 
-def memoize_those_moves(file_name):
-    try:
-        cache = json.load(open(file_name, 'r'))
-    except (IOError, ValueError):
-        cache = {}
-
-    atexit.register(lambda: json.dump(cache, open(file_name, 'w'), indent=2))
-
-    def decorator(func):
-        def new_func(self, board_state: list, jeton: str):
-            key = str(board_state)
-
-            if key not in cache:
-                cache[key] = func(self, board_state, jeton)
-            return cache[key]
-        return new_func
-
-    return decorator
-
-"""
-Source: https://www.youtube.com/watch?v=qORqpMg3Uew&list=PLsxaCifbRiGtlF1YLBOgJEBYZdoaY-9nK&index=1&ab_channel=Indently
-Source: https://stackoverflow.com/questions/16463582/memoize-to-disk-python-persistent-memoization
-Source: https://docs.python.org/2/library/shelve.html
-Utilisation: trying to speed up our recursion functions by adding a cache.
-Comments: Would need to store the cache somewhere and reuse it between session so many case would be already known
-"""
-# def memoize_moves(func):
-#     cache = shelve.open('possible_moves.db')
-
-#     @wraps(func)
-#     def wrapper(*args, **kwargs):
-#         key = str(args) + str(kwargs)
-
-#         if key not in cache:
-#             cache[key] = func(*args, **kwargs)
-
-#         return cache[key]
-
-#     return wrapper
 
 class Node:
     """Definit un node utilisé avec la theorie des graphes pour garder le board state du jeu"""
@@ -450,7 +432,7 @@ class Ai_C4(Joueureuse):
                     valeur -= self.node_value(node)
         return valeur
 
-    @memoize_those_moves('possible_moves.json')
+    # @memoize_those_moves('possible_moves.json')
     def possible_moves(self, board_state: list, jeton: str) -> list:
         """Complexite: n^3"""
         data = []
@@ -539,6 +521,19 @@ class Ai_C4(Joueureuse):
         return best_path.data[2]
 
 
+def colonne_jouables(board: Board) ->list:
+    jouables = []
+    for col in range(board.colonnes):
+        if board.first_empty_node(col):
+            jouables.append(col)
+    return jouables
+
+def draw(board: Board) -> tuple:
+    jouables = colonne_jouables(board)
+    if len(jouables) == 0:
+        return jouables, True
+    return jouables, False
+
 def ai_game(board: Board, player1: Joueureuse, ai: Ai_C4) -> None:
     firstplayer =  randint(1,2)
     if firstplayer == 1:
@@ -552,6 +547,11 @@ def ai_game(board: Board, player1: Joueureuse, ai: Ai_C4) -> None:
     turn_count = 0
     print(board)
     while not won:
+        jouables, is_draw = draw(board)
+        if is_draw:
+            won = True
+            print('Partie egale')
+
         if turn_count % 2 == 0:
             active_player = firstplayer
         else:
@@ -562,6 +562,7 @@ def ai_game(board: Board, player1: Joueureuse, ai: Ai_C4) -> None:
             active_player.jouer(board)
         else:
             colonne = int(input("Entre la colonne : "))
+            # colonne = random.choice(jouables)
             active_player.jouer(board, colonne)
         win, winner = board.check_for_win()
         turn_count += 1
@@ -569,6 +570,17 @@ def ai_game(board: Board, player1: Joueureuse, ai: Ai_C4) -> None:
         if win:
             print(f"La personne jouant: {winner} a gagner!")
             won = True
+            if winner != 'R':
+                os._exit()
+        
+        """
+        Source: https://docs.python.org/3/library/atexit.html
+        Utiliser pour train le programme juste avec les donnees quand il gagne
+        En utilisant os.exit on skip les atexit functions du decorateur memoize_this
+            The functions registered via this module are not called when the program is killed by a signal
+            not handled by Python, when a Python fatal internal error is detected, or when os._exit() is called.
+        """
+
 
 
 def main():
