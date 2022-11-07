@@ -1,14 +1,46 @@
 from random import randint
 from math import inf
 from functools import wraps
+import shelve
 
 """
 Source: https://www.youtube.com/watch?v=qORqpMg3Uew&list=PLsxaCifbRiGtlF1YLBOgJEBYZdoaY-9nK&index=1&ab_channel=Indently
+Source: https://stackoverflow.com/questions/16463582/memoize-to-disk-python-persistent-memoization
+Source: https://docs.python.org/2/library/shelve.html
 Utilisation: trying to speed up our recursion functions by adding a cache.
 Comments: Would need to store the cache somewhere and reuse it between session so many case would be already known
 """
-def memoize(func):
-    cache = {}
+def memoize_moves(func):
+    cache = shelve.open('possible_moves.db')
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        key = str(args) + str(kwargs)
+
+        if key not in cache:
+            cache[key] = func(*args, **kwargs)
+
+        return cache[key]
+
+    return wrapper
+
+
+def memoize_board_value(func):
+    cache = shelve.open('board_values.db')
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        key = str(args) + str(kwargs)
+
+        if key not in cache:
+            cache[key] = func(*args, **kwargs)
+
+        return cache[key]
+
+    return wrapper
+
+def memoize_values(func):
+    cache = shelve.open('values.db')
 
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -350,7 +382,7 @@ class Joueureuse:
 
 
 class Ai_C4(Joueureuse):
-    HAUTEUR  = 7
+    HAUTEUR  = 0
     scale = {
         "RRRR": inf,
         "R RR": 200,
@@ -377,9 +409,9 @@ class Ai_C4(Joueureuse):
         for rangee in board.board_to_matrice():
             espaces_vides += rangee.count('')
         if espaces_vides <= 20:
-            Ai_C4.hauteur = 9
+            Ai_C4.HAUTEUR = 7
         else:
-            Ai_C4.hauteur = 7
+            Ai_C4.HAUTEUR = 5
         colonne = self.next_move(board)
         node_to_modify = board.first_empty_node(colonne)
         board.updater_board(self.jeton, node_to_modify)
@@ -395,7 +427,7 @@ class Ai_C4(Joueureuse):
 
         return score_vertical + score_horizontal + score_frontslash + score_backslash
 
-
+    @memoize_board_value
     def board_value(self, board: Board) -> int:
         """Complexite: min n -- max n^2"""
         valeur = 0
@@ -408,7 +440,7 @@ class Ai_C4(Joueureuse):
                     valeur -= self.node_value(node)
         return valeur
 
-    @memoize
+    @memoize_moves
     def possible_moves(self, board_state: list, jeton: str) -> list:
         """Complexite: n^3"""
         data = []
@@ -426,7 +458,6 @@ class Ai_C4(Joueureuse):
 
         return data
 
-    @memoize
     def moves(self, node: TNode, h: int) -> None:
         """methode de resursion pour trouver tous les moves possibles sur plusieurs tours: h doit etre impair
            Complexite: n^k
@@ -455,7 +486,7 @@ class Ai_C4(Joueureuse):
             colonne_parent = 0
         return Ai_C4.hauteur(node.parent, str(colonne_parent)+str(colonne), h+1)
 
-    @memoize
+    @memoize_values
     @staticmethod
     def valeur(node: TNode, adversaire: bool = False) -> Node:
         """Methode pour connaitre le meilleur boardstate possible dans le futur selon la valeur max de chaque prochain coups, renvoie la feuille de la branche correspondante
@@ -487,15 +518,12 @@ class Ai_C4(Joueureuse):
             path = path.parent
         return path
 
-    def next_move(self, board: Board, h: int = HAUTEUR) -> int:
+    def next_move(self, board: Board) -> int:
         """Complexite: n^k"""
         board_state = board.board_to_matrice()
         self.root = TNode(None, (board_state, (self.board_value(self.temp_board)), None))
         self.temp_board.unfill()
-        self.moves(self.root, h)
-        for process in self.processes:
-            process.join()
-        self.processes.clear()
+        self.moves(self.root, Ai_C4.HAUTEUR)
         best_path = self.best_path(self.root)
         return best_path.data[2]
 

@@ -6,3 +6,10 @@ projet_final/connect_four/__pycache__/__init__.cpython-310.pyc
 projet_final/connect_four/__pycache__/__init__.cpython-310.pyc
 *.pyc
 *.pyc
+board_values.db.dat
+board_values.db.dir
+possible_moves.db.bak
+possible_moves.db.dat
+possible_moves.db.dir
+values.db.dat
+values.db.dir
