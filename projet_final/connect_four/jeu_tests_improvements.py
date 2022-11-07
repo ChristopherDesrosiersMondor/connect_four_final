@@ -2,6 +2,45 @@ from random import randint
 from math import inf
 from functools import wraps
 import shelve
+import json, atexit
+
+def memoize_this(file_name):
+    try:
+        cache = json.load(open(file_name, 'r'))
+    except (IOError, ValueError):
+        cache = {}
+
+    atexit.register(lambda: json.dump(cache, open(file_name, 'w'), indent=2))
+
+    def decorator(func):
+        def new_func(self, board):
+            key = str(board)
+
+            if key not in cache:
+                cache[key] = func(self, board)
+            return cache[key]
+        return new_func
+
+    return decorator
+
+def memoize_those_moves(file_name):
+    try:
+        cache = json.load(open(file_name, 'r'))
+    except (IOError, ValueError):
+        cache = {}
+
+    atexit.register(lambda: json.dump(cache, open(file_name, 'w'), indent=2))
+
+    def decorator(func):
+        def new_func(self, board_state: list, jeton: str):
+            key = str(board_state)
+
+            if key not in cache:
+                cache[key] = func(self, board_state, jeton)
+            return cache[key]
+        return new_func
+
+    return decorator
 
 """
 Source: https://www.youtube.com/watch?v=qORqpMg3Uew&list=PLsxaCifbRiGtlF1YLBOgJEBYZdoaY-9nK&index=1&ab_channel=Indently
@@ -10,48 +49,19 @@ Source: https://docs.python.org/2/library/shelve.html
 Utilisation: trying to speed up our recursion functions by adding a cache.
 Comments: Would need to store the cache somewhere and reuse it between session so many case would be already known
 """
-def memoize_moves(func):
-    cache = shelve.open('possible_moves.db')
+# def memoize_moves(func):
+#     cache = shelve.open('possible_moves.db')
 
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        key = str(args) + str(kwargs)
+#     @wraps(func)
+#     def wrapper(*args, **kwargs):
+#         key = str(args) + str(kwargs)
 
-        if key not in cache:
-            cache[key] = func(*args, **kwargs)
+#         if key not in cache:
+#             cache[key] = func(*args, **kwargs)
 
-        return cache[key]
+#         return cache[key]
 
-    return wrapper
-
-
-def memoize_board_value(func):
-    cache = shelve.open('board_values.db')
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        key = str(args) + str(kwargs)
-
-        if key not in cache:
-            cache[key] = func(*args, **kwargs)
-
-        return cache[key]
-
-    return wrapper
-
-def memoize_values(func):
-    cache = shelve.open('values.db')
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        key = str(args) + str(kwargs)
-
-        if key not in cache:
-            cache[key] = func(*args, **kwargs)
-
-        return cache[key]
-
-    return wrapper
+#     return wrapper
 
 class Node:
     """Definit un node utilisé avec la theorie des graphes pour garder le board state du jeu"""
@@ -427,7 +437,7 @@ class Ai_C4(Joueureuse):
 
         return score_vertical + score_horizontal + score_frontslash + score_backslash
 
-    @memoize_board_value
+    @memoize_this('board_values.json')
     def board_value(self, board: Board) -> int:
         """Complexite: min n -- max n^2"""
         valeur = 0
@@ -440,7 +450,7 @@ class Ai_C4(Joueureuse):
                     valeur -= self.node_value(node)
         return valeur
 
-    @memoize_moves
+    @memoize_those_moves('possible_moves.json')
     def possible_moves(self, board_state: list, jeton: str) -> list:
         """Complexite: n^3"""
         data = []
@@ -486,7 +496,7 @@ class Ai_C4(Joueureuse):
             colonne_parent = 0
         return Ai_C4.hauteur(node.parent, str(colonne_parent)+str(colonne), h+1)
 
-    @memoize_values
+    # @memoize_this('valeurs.json')
     @staticmethod
     def valeur(node: TNode, adversaire: bool = False) -> Node:
         """Methode pour connaitre le meilleur boardstate possible dans le futur selon la valeur max de chaque prochain coups, renvoie la feuille de la branche correspondante
@@ -518,6 +528,7 @@ class Ai_C4(Joueureuse):
             path = path.parent
         return path
 
+    @memoize_this('next_moves.json')
     def next_move(self, board: Board) -> int:
         """Complexite: n^k"""
         board_state = board.board_to_matrice()

@@ -13,3 +13,7 @@ possible_moves.db.dat
 possible_moves.db.dir
 values.db.dat
 values.db.dir
+board_values.json
+next_moves.json
+possible_moves.json
+valeurs.json
