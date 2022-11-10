@@ -3,6 +3,7 @@ from random import randint
 from math import inf
 from functools import wraps
 import json, atexit
+import random
 # import random
 
 """
@@ -373,6 +374,19 @@ class Joueureuse:
         board.updater_board(self.jeton, node_to_modify)
 
 
+class Ai_C4_simple(Joueureuse):
+    def __init__(self, jeton_color: str) -> None:
+        super().__init__(jeton_color)
+
+    def jouer(self, board: Board) -> None:
+        cols = []
+        for col in range(board.colonnes):
+            if board.first_empty_node(col):
+                cols.append(col)
+        
+        colonne = random.choice(cols)
+        return super().jouer(board, colonne)
+
 class Ai_C4(Joueureuse):
     HAUTEUR  = 0
     scale = {
@@ -564,6 +578,7 @@ def ai_game(board: Board, player1: Joueureuse, ai: Ai_C4) -> None:
             colonne = int(input("Entre la colonne : "))
             # colonne = random.choice(jouables)
             active_player.jouer(board, colonne)
+        # active_player.jouer(board)
         win, winner = board.check_for_win()
         turn_count += 1
         print(board)
@@ -571,7 +586,7 @@ def ai_game(board: Board, player1: Joueureuse, ai: Ai_C4) -> None:
             print(f"La personne jouant: {winner} a gagner!")
             won = True
             if winner != 'R':
-                os._exit()
+                os._exit(0)
         
         """
         Source: https://docs.python.org/3/library/atexit.html
@@ -587,6 +602,9 @@ def main():
     board = Board(6, 7)
     valerie = Joueureuse("Y")
     ai = Ai_C4("R", valerie.jeton)
+
+    # for i in range(200):
+    #     ai_game(board, valerie, ai)
 
     ai_game(board, valerie, ai)
 
