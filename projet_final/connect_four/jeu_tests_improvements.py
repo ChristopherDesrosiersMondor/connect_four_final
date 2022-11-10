@@ -433,7 +433,7 @@ class Ai_C4(Joueureuse):
 
         return score_vertical + score_horizontal + score_frontslash + score_backslash
 
-    @memoize_this('board_values.json')
+    # @memoize_this('board_values.json')
     def board_value(self, board: Board) -> int:
         """Complexite: min n -- max n^2"""
         valeur = 0
