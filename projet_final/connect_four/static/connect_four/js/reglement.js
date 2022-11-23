@@ -56,6 +56,10 @@ function afficher_strategies() {
             titre.innerText = titres_strategies[i]
             let text = document.createElement('p')
             text.innerText = dict_strategies[titres_strategies[i]]
+            text.style.whiteSpace = "pre-wrap"
+            text.style.wordBreak = "break-word"
+            text.style.textAlign = "justify"
+            text.style.textJustify = "inter-word"
             paragraphe.append(titre, text)
         }
 
