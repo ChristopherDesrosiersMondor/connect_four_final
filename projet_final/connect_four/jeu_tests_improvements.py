@@ -408,8 +408,13 @@ class Ai_C4(Joueureuse):
         self.root = None
         self.temp_board = Board(6, 7)
         self.processes = []
+        file_name = 'next_moves.json'
+        
+        try:
+            self.cache = json.load(open(file_name, 'r'))
+        except (IOError, ValueError):
+            self.cache = {}
 
-    
     def jouer(self, board: Board) -> int:
         espaces_vides = 0 
         for rangee in board.board_to_matrice():
@@ -418,7 +423,11 @@ class Ai_C4(Joueureuse):
             Ai_C4.HAUTEUR = 7
         else:
             Ai_C4.HAUTEUR = 5
-        colonne = self.next_move(board)
+        
+        if board in self.cache:
+            colonne = self.cache[board]
+        else:
+            colonne = self.next_move(board)
         node_to_modify = board.first_empty_node(colonne)
         board.updater_board(self.jeton, node_to_modify)
         return colonne
