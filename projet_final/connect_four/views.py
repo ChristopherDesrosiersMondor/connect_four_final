@@ -1,7 +1,7 @@
 import json
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from connect_four.jeu import *
+from connect_four.jeu_tests_improvements import *
 # Create your views here.
 # https://www.javatpoint.com/django-session
 
